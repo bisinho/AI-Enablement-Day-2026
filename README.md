@@ -7,11 +7,9 @@ This event is designed for **SAP partners, customers, and developers** who want 
 The focus of the day is simple:  
 👉 **Learn by building real AI-powered use cases end-to-end on SAP BTP**
 
----
 
 ## Hands-on sessions covered in this repo 
 
----
 
 ### Build AI-Powered Applications with SAP BTP & AI Core
 - Introduction to **SAP BTP landscape** and pre-configured enablement environment.
@@ -31,7 +29,6 @@ The focus of the day is simple:
 - SAP AI Launchpad (standard plan)  
 - Cloud Foundry Runtime  
 
----
 
 ### Extend Your Applications with AI (Joule & AI Agents)
 - Introduction to **AI extensibility patterns** on SAP BTP
@@ -48,7 +45,6 @@ The focus of the day is simple:
 - Joule  
 - Joule Studio  
 
----
 
 ### Intelligent Operations with AI (Day 2 Ops)
 - Introduction to **Day 2 Operations with AI**
@@ -60,7 +56,6 @@ The focus of the day is simple:
 - Creating and executing **automation scenarios**
 - Building and releasing **AI-enabled operations agents**
 
----
 
 ### AI-Enabled Central Operations with SAP Cloud ALM & Automation Pilot
 - Introduction to **centralized operations with SAP Cloud ALM**
