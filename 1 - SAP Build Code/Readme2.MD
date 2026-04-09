@@ -34,7 +34,7 @@ Before starting, make sure you have:
 
 
 ## 🏗 Scenario
----
+--------------
 
 Provide a **short business or technical context**.
 
