@@ -34,13 +34,12 @@ Before starting, make sure you have:
 
 
 ## 🏗 Scenario
+---
 
 Provide a **short business or technical context**.
 
 > Example:
 > You are building an application that processes supplier documents and extracts key data using AI services.
-
----
 
 ## 📦 Step 1: <Step Title>
 
