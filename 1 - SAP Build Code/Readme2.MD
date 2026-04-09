@@ -1,4 +1,4 @@
-# 🧪 Exercise <X>: <Exercise Title>
+# 🧪 Exercise 1: Tile Goes Here 
 
 ## 🎯 Objective
 
@@ -40,6 +40,7 @@ Provide a **short business or technical context**.
 > Example:
 > You are building an application that processes supplier documents and extracts key data using AI services.
 
+---
 
 ## 📦 Step 1: <Step Title>
 
@@ -76,7 +77,6 @@ Short explanation.
 
 What success looks like.
 
----
 
 ## 📦 Step 3: <Step Title>
 
@@ -98,6 +98,7 @@ cf push
 
 Application is successfully deployed and running.
 
+---
 
 ## 🧪 Validation / Test Your Result
 
