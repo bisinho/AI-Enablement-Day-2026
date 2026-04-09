@@ -11,7 +11,6 @@ The focus of the day is simple:
 
 ## Hands-on sessions covered in this repo
 
-
 ### Build AI-Powered Applications with SAP BTP & AI Core
 - Introduction to **SAP BTP landscape** and pre-configured enablement environment.
 - Understanding **SAP AI Core** and how to access **generative AI models**.
