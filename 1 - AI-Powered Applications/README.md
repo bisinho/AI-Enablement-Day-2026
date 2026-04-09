@@ -1,4 +1,3 @@
-<!-- filepath: /Users/I511540/Intellij/enablementDay/enablementDay2026/AI-Enablement-Day-2026/1 - AI-Powered Applications/README_EXERCISE_1.md -->
 # 🧪 Exercise #1: RFQx – AI-Powered RFQ Document Analysis (SAP AI Core + Cloud Foundry)
 
 ## 🎯 Objective
