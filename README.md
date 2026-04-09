@@ -9,7 +9,17 @@ The focus of the day is simple:
 
 ---
 
-## Hands-on sessions covered in this repo **Hands-on:**
+## Hands-on sessions covered in this repo 
+
+---
+
+### Build AI-Powered Applications with SAP BTP & AI Core
+- Introduction to **SAP BTP landscape** and pre-configured enablement environment.
+- Understanding **SAP AI Core** and how to access **generative AI models**.
+- Overview of **SAP Cloud SDK for AI**.
+
+
+**Hands-on:**
 - Exploring the provided **SAP BTP Subaccount**
 - Deploying a sample application (**RFQx Document Analysis App**)
 - Integrating the app with **SAP AI Core**
