@@ -1,70 +1,110 @@
+# SAP Enablement Day: AI in Action – Hands-On Workshops (April 17, 2026)
 
+Welcome to our **on-site hands-on enablement session** on **AI in Action with SAP Business Technology Platform (SAP BTP)**!
 
-# DevOps with SAP Business Technology Platform (SAP BTP) – Hands-On Enablement
+This event is designed for **SAP partners, customers, and developers** who want to gain **practical, hands-on experience** with **SAP AI capabilities, tools, and services** across development, extension, and operations scenarios.
 
-Welcome to our **on-site hands-on enablement session** on **DevOps with SAP Business Technology Platform (SAP BTP)**! This event is designed for **SAP partners, customers, and developers** who want to streamline their cloud application development and operations using **SAP BTP DevOps tools and best practices**.
-
-![](./enablement-01.png)
----
-
-## **Hands-on sessions covered in this repo**
-
-
-### ** SAP Build Code Overview **
-- Introduction to **SAP Build Code** and how it accelerates application development.
-- Key features and benefits for **SAP partners and customers**.
-- **Hands-on:** Accessing our **SAP BTP Subaccount**, setting up **SAP Build Code** and **SAP Business Application Studio**.
+The focus of the day is simple:  
+👉 **Learn by building real AI-powered use cases end-to-end on SAP BTP**
 
 ---
 
-### ** Cloud App Development with SAP Business Application Studio **
-- Exploring how the **Cloud Application Programming (CAP) Model** simplifies and accelerates SAP development.
-- Building **scalable, cloud-native applications** with best practices.
--  **Hands-on:** 
-  - Setting up **SAP Business Application Studio (BAS)**.
-  - Developing, testing, and deploying a **CAP-based** application on **SAP BTP**.
-  - Using **Multitarget Application (MTA) Model** for structuring and deploying applications within **Cloud Foundry**.
+## Hands-on sessions covered in this repo
 
 ---
 
+### Build AI-Powered Applications with SAP BTP & AI Core
+- Introduction to **SAP BTP landscape** and pre-configured enablement environment.
+- Understanding **SAP AI Core** and how to access **generative AI models**.
+- Overview of **SAP Cloud SDK for AI**.
 
+**Hands-on:**
+- Exploring the provided **SAP BTP Subaccount**
+- Deploying a sample application (**RFQx Document Analysis App**)
+- Integrating the app with **SAP AI Core**
+- Deploying the application on **Cloud Foundry runtime**
+- Testing and exploring **AI-powered features**
 
-### ** Seamless Software Delivery: Transport Management & CI/CD Pipelines on SAP BTP *
-- Deep dive into **SAP Cloud Transport Management (cTMS)** and **SAP Continuous Integration & Delivery (CI/CD)**.
--  **Hands-on:** 
-  - Configuring and executing a **CI/CD pipeline** for an SAP BTP application.
-  - Integrating **cTMS** for centralized **control, tracking, and transport management**.
-
----
-
-
-### ** Alert Notification Service for SAP BTP in Action **
-- Introduction to **SAP Alert Notification Service**.
-- Setting up **proactive alerting** and **incident management** for SAP BTP applications.
--  **Hands-on:** 
-  - Consuming **events** and setting up **instant notifications** for cloud applications on SAP BTP.
-
----
-
-### ** Day 2 Operations with SAP Automation Pilot **
-- Introduction to **SAP Automation Pilot** for automating **operational tasks and remediations**.
--  **Hands-on:**
-  - Creating and testing **automation workflows** for common operational tasks.
-  - Exploring potential **use cases** where SAP Automation Pilot adds value for Ops teams.
-
+**Main services used:**
+- SAP AI Core (extended plan)  
+- SAP AI Launchpad (standard plan)  
+- Cloud Foundry Runtime  
 
 ---
 
-## **Prerequisites**
-To get the most out of this hands-on session, please ensure:
+### Extend Your Applications with AI (Joule & AI Agents)
+- Introduction to **AI extensibility patterns** on SAP BTP
+- Overview of **Joule** and **Joule Studio** capabilities
+- Building **AI agents / skills** for business scenarios
 
-✅ You have an **SAP BTP account** with access to **SAP Business Application Studio**.  
-✅ You are familiar with **basic cloud development concepts** and **Git**.  
-✅ You have installed the necessary **development tools** as shared in our pre-event checklist.
+**Hands-on:**
+- Creating AI-powered extensions using **SAP Build Process Automation (SBPA)**
+- Designing and testing **AI agents with Joule**
+- Exploring real-life **AI-assisted automation use cases**
+
+**Main services used:**
+- SAP Build Process Automation  
+- Joule  
+- Joule Studio  
 
 ---
 
-##  **Let's Build & Automate!**
-This enablement day is **interactive and hands-on**, ensuring you gain **real-world experience** with SAP BTP DevOps tools. Get ready to **develop, deploy, and automate** like a pro!
+### Intelligent Operations with AI (Day 2 Ops)
+- Introduction to **Day 2 Operations with AI**
+- Using **SAP Automation Pilot** for automated operations
+- Leveraging **Joule** for intelligent decision-making
 
- **For any questions or support, reach out to us during the event!**  
+**Hands-on:**
+- Designing **AI-driven operational workflows**
+- Creating and executing **automation scenarios**
+- Building and releasing **AI-enabled operations agents**
+
+---
+
+### AI-Enabled Central Operations with SAP Cloud ALM & Automation Pilot
+- Introduction to **centralized operations with SAP Cloud ALM**
+- Integration of **SAP Automation Pilot** and **SAP Cloud ALM**
+- Enhancing operations with **SAP AI Core-driven insights**
+
+**Hands-on:**
+- Running automated operational scenarios across SAP BTP
+- Integrating **Automation Pilot with SAP Cloud ALM**
+- Using **AI for analysis and recommendations** on operational data
+- Executing **end-to-end remediation workflows**
+
+💡 **Preconfigured environment:**
+- 40 ready-to-use **SAP BTP subaccounts** for live hands-on exercises  
+- Real-time **AI + operations integration scenarios**
+
+---
+
+## Prerequisites
+
+To get the most out of this enablement day, please ensure:
+
+- ✅ Access to an **SAP BTP account** (pre-provisioned for the session)  
+- ✅ Basic understanding of **SAP BTP concepts** and **cloud applications**  
+- ✅ Familiarity with **REST APIs, cloud deployments, or automation concepts** is a plus  
+- ✅ Laptop with stable internet connection and browser access  
+
+---
+
+## What You Will Achieve
+
+By the end of this session, you will:
+
+- 🚀 Build and deploy an **AI-powered application on SAP BTP**  
+- 🤖 Extend applications with **AI agents using Joule**  
+- ⚙️ Automate operations using **SAP Automation Pilot**  
+- 📊 Integrate **AI into operational decision-making**  
+- 🔗 Connect **development, AI, and operations into one flow**
+
+---
+
+## Let’s Build AI in Action!
+
+This enablement day is **fully hands-on and scenario-driven**, giving you real experience with **SAP’s AI ecosystem**.
+
+Come ready to **experiment, build, and automate with AI on SAP BTP**!
+
+👉 **Need help? Reach out to the instructors during the session—we’re here to support you!**
