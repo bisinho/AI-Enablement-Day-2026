@@ -16,7 +16,6 @@ The focus of the day is simple:
 - Understanding **SAP AI Core** and how to access **generative AI models**.
 - Overview of **SAP Cloud SDK for AI**.
 
-
 **Hands-on:**
 - Exploring the provided **SAP BTP Subaccount**
 - Deploying a sample application (**RFQx Document Analysis App**)
@@ -29,6 +28,7 @@ The focus of the day is simple:
 - SAP AI Launchpad (standard plan)  
 - Cloud Foundry Runtime  
 
+---
 
 ### Extend Your Applications with AI (Joule & AI Agents)
 - Introduction to **AI extensibility patterns** on SAP BTP
@@ -45,6 +45,7 @@ The focus of the day is simple:
 - Joule  
 - Joule Studio  
 
+---
 
 ### Intelligent Operations with AI (Day 2 Ops)
 - Introduction to **Day 2 Operations with AI**
@@ -56,6 +57,7 @@ The focus of the day is simple:
 - Creating and executing **automation scenarios**
 - Building and releasing **AI-enabled operations agents**
 
+---
 
 ### AI-Enabled Central Operations with SAP Cloud ALM & Automation Pilot
 - Introduction to **centralized operations with SAP Cloud ALM**
