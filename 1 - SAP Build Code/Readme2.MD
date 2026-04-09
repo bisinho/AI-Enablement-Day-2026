@@ -7,7 +7,7 @@ Describe **what participants will achieve** in this exercise.
 > Example:
 > Build and deploy a sample application integrated with SAP AI Core and test AI-powered document analysis.
 
----
+
 
 ## 🧠 What You Will Learn
 
@@ -15,13 +15,13 @@ Describe **what participants will achieve** in this exercise.
 * Key concept 2 (e.g. deploying apps on Cloud Foundry)
 * Key concept 3 (e.g. integrating AI services)
 
----
+
 
 ## ⏱ Estimated Time
 
 **~XX minutes**
 
----
+
 
 ## 🧰 Prerequisites
 
@@ -32,7 +32,6 @@ Before starting, make sure you have:
 * ✅ Access to tools (e.g. BAS, CF CLI, etc.)
 * ✅ Completed previous exercise (if applicable)
 
----
 
 ## 🏗 Scenario
 
@@ -41,7 +40,6 @@ Provide a **short business or technical context**.
 > Example:
 > You are building an application that processes supplier documents and extracts key data using AI services.
 
----
 
 ## 📦 Step 1: <Step Title>
 
@@ -62,7 +60,6 @@ Short explanation.
 
 What success looks like.
 
----
 
 ## 📦 Step 2: <Step Title>
 
@@ -101,7 +98,6 @@ cf push
 
 Application is successfully deployed and running.
 
----
 
 ## 🧪 Validation / Test Your Result
 
