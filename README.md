@@ -12,7 +12,7 @@ The focus of the day is simple:
 
 
 ---
-### Build AI-Powered Applications with SAP BTP & AI Core
+### [workshop #1] Build AI-Powered Applications with SAP BTP & AI Core
 - Introduction to **SAP BTP landscape** and pre-configured enablement environment.
 - Understanding **SAP AI Core** and how to access **generative AI models**.
 - Overview of **SAP Cloud SDK for AI**.
@@ -31,7 +31,7 @@ The focus of the day is simple:
 
 ---
 
-### Extend Your Applications with AI (Joule & AI Agents)
+### [workshop #2] Extend Your Applications with AI (Joule & AI Agents)
 - Introduction to **AI extensibility patterns** on SAP BTP
 - Overview of **Joule** and **Joule Studio** capabilities
 - Building **AI agents / skills** for business scenarios
@@ -48,7 +48,7 @@ The focus of the day is simple:
 
 ---
 
-### Intelligent Operations with AI (Day 2 Ops)
+### [workshop #3] Intelligent Operations with AI (Day 2 Ops)
 - Introduction to **Day 2 Operations with AI**
 - Using **SAP Automation Pilot** for automated operations
 - Leveraging **Joule** for intelligent decision-making
@@ -60,7 +60,7 @@ The focus of the day is simple:
 
 ---
 
-### AI-Enabled Central Operations with SAP Cloud ALM & Automation Pilot
+### [workshop #4] AI-Enabled Central Operations with SAP Cloud ALM & Automation Pilot
 - Introduction to **centralized operations with SAP Cloud ALM**
 - Integration of **SAP Automation Pilot** and **SAP Cloud ALM**
 - Enhancing operations with **SAP AI Core-driven insights**
