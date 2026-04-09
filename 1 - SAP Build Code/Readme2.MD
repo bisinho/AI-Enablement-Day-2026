@@ -34,20 +34,19 @@ Before starting, make sure you have:
 
 
 ## 🏗 Scenario
---------------
 
 Provide a **short business or technical context**.
 
 > Example:
 > You are building an application that processes supplier documents and extracts key data using AI services.
 
-## 📦 Step 1: <Step Title>
+### 📦 Step 1: <Step Title>
 
-### Description
+#### Description
 
 Short explanation.
 
-### ▶️ Actions
+#### ▶️ Actions
 
 1. Go to <SAP BTP / Tool / URL>
 2. Click on <...>
@@ -56,34 +55,34 @@ Short explanation.
    * Parameter A = ...
    * Parameter B = ...
 
-### ✅ Expected Result
+#### ✅ Expected Result
 
 What success looks like.
 
 
-## 📦 Step 2: <Step Title>
+### 📦 Step 2: <Step Title>
 
-### Description
+#### Description
 
 Short explanation.
 
-### ▶️ Actions
+#### ▶️ Actions
 
 1. Do this
 2. Do that
 
-### ✅ Expected Result
+#### ✅ Expected Result
 
 What success looks like.
 
 
-## 📦 Step 3: <Step Title>
+### 📦 Step 3: <Step Title>
 
-### Description
+#### Description
 
 Short explanation.
 
-### ▶️ Actions
+#### ▶️ Actions
 
 1. Run the following command:
 
@@ -93,7 +92,7 @@ cf push
 
 2. Verify deployment logs
 
-### ✅ Expected Result
+#### ✅ Expected Result
 
 Application is successfully deployed and running.
 
