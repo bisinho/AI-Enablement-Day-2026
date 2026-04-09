@@ -1,4 +1,4 @@
-# 🧪 Workshop #2: {Tile Goes Here}
+# 🧪 Exercise #2: {Tile Goes Here}
 
 ## 🎯 Objective
 
