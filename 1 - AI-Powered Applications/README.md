@@ -1,5 +1,7 @@
 # 🧪 Exercise #1: RFQx – AI-Powered RFQ Document Analysis (SAP AI Core + Cloud Foundry)
 
+> **Original project:** This exercise is based on the [RFQx Document Analysis Application](https://ai4u-website.cfapps.eu10-004.hana.ondemand.com/project/sap-rfqx-document-analysis-application) from the SAP AI for You initiative.
+
 ## 🎯 Objective
 
 By the end of this exercise, you will:
@@ -50,11 +52,49 @@ You are supporting a procurement process where multiple suppliers respond to an 
 - build a **knowledge graph** from extracted facts
 - generate AI-powered summaries and enable conversational Q&A over processed content
 
-### Storage behavior (important)
-RFQx is designed for workshop/demo usage:
-- The app does **not provide persistent storage**.
-- Projects and uploaded documents are available **only while the app session is alive and the app is running**.
-- If the app is stopped/restarted/redeployed, previously uploaded projects may no longer be available.
+---
+
+## 📱 App Overview
+
+RFQx is a five-page Streamlit application. Here is a quick look at each step of the workflow:
+
+**1. Project Setup** — Create a new RFQ analysis project or resume an existing one. Projects act as containers for all supplier documents and extracted data within a session.
+
+<img src="resources/assets/RFQ_app_createProject.jpg" alt="Project Setup page – create or load a project" width="700"/>
+
+---
+
+**2. Process Documents** — Define how many suppliers to compare, name each one, and upload their RFQ response documents (PDF, XLSX, CSV). Trigger AI extraction with a single click once all documents are attached.
+
+> **Additional Note:** This demo uses manual file upload to keep the setup self-contained. In a real implementation the document ingestion step can be replaced or augmented by a direct connection to backend systems — SAP S/4HANA, SAP Ariba, HANA databases, or any other enterprise data source — so procurement data flows in automatically without manual upload.
+
+> Because the app runs entirely on **SAP BTP infrastructure**, all data stays within your controlled environment — no information leaves your landscape. This also means the app can work with sensitive internal documents, complex multi-page contracts, or proprietary supplier data that could never be sent to a public SaaS tool. The tight integration with the SAP ecosystem makes it straightforward to connect additional enterprise systems and enrich the analysis with live operational data.
+
+<img src="resources/assets/RFQ_app_selectSupplierNamesAndAttachRelevantDocumentsPerBidderAndAnalyzeInfo.jpg" alt="Process Documents – upload supplier documents and trigger extraction" width="700"/>
+
+---
+
+**3. Attribute Selection** — Before extraction runs, choose exactly which attributes the AI should pull from the documents — from project information and key dates to technical requirements and pricing. All attributes are grouped by category and can be toggled individually or in bulk.
+
+<img src="resources/assets/RFQ_app_processingForm_selectAttributesForGraphConstruction.jpg" alt="Attribute extraction configuration – select fields for the knowledge graph" width="700"/>
+
+---
+
+**4. Compare Providers** — Side-by-side comparison of all extracted attributes across suppliers. A completeness score per supplier shows how thoroughly each document answered the RFQ requirements, making gaps immediately visible.
+
+<img src="resources/assets/RFQ_app_analyzeAndCompareTheSelectedProviders.jpg" alt="Compare Providers – completeness scores and attribute comparison" width="700"/>
+
+---
+
+**5. RFQ Recommender** — Generates a comprehensive analysis report driven by the knowledge graph: executive summary, detailed Markdown comparison table, strengths and weaknesses per supplier, country risk factors, and a final recommendation. An interactive graph visualisation of supplier connections is also available.
+
+<img src="resources/assets/RFQ_app_getRecommendationsInsightsAboutBiddersAndGraphVisualizationOfConnections.jpg" alt="RFQ Recommender – AI-generated report and knowledge graph visualisation" width="700"/>
+
+---
+
+**6. Supplier Chat** — Conversational Q&A over the processed supplier documents. Select one or more suppliers to query, choose a query mode (single supplier or comparative analysis), pick from suggested questions or type your own, and get streaming AI answers grounded in the document content.
+
+<img src="resources/assets/RFQ_app_chatWithDocuments.jpg" alt="Supplier Chat – ask questions across supplier documents with streaming responses" width="700"/>
 
 ---
 
@@ -100,6 +140,10 @@ Your manifest has a unique app name and `AICORE_RESOURCE_GROUP=default`.
 
 #### Description
 The app calls generative models through **SAP AI Core**.
+
+> 📖 Official setup documentation:
+> - [SAP AI Core – Initial Setup](https://help.sap.com/docs/sap-ai-core/sap-ai-core-service-guide/initial-setup?locale=en-US&version=CLOUD)
+> - [SAP AI Launchpad – Initial Setup](https://help.sap.com/docs/ai-launchpad/sap-ai-launchpad/initial-setup?locale=en-US&version=CLOUD)
 
 #### ▶️ Actions
 ### 3.1 Subscribe to SAP AI Core
@@ -364,6 +408,12 @@ Expected:
 - Streamlit session state + reusable UI components
 - Knowledge graph generation from extracted attributes
 - `generative-ai-hub-sdk` for calling AI Core deployments
+
+### Storage behavior (important)
+RFQx is designed for workshop/demo usage:
+- The app does **not provide persistent storage**.
+- Projects and uploaded documents are available **only while the app session is alive and the app is running**.
+- If the app is stopped/restarted/redeployed, previously uploaded projects may no longer be available.
 
 ---
 
