@@ -48,20 +48,8 @@ The focus of the day is simple:
 
 ---
 
-### [workshop #3] Intelligent Operations with AI (Day 2 Ops)
-- Introduction to **Day 2 Operations with AI**
-- Using **SAP Automation Pilot** for automated operations
-- Leveraging **Joule** for intelligent decision-making
-
-**Hands-on:**
-- Designing **AI-driven operational workflows**
-- Creating and executing **automation scenarios**
-- Building and releasing **AI-enabled operations agents**
-
----
-
-### [workshop #4] AI-Enabled Central Operations with SAP Cloud ALM & Automation Pilot
-- Introduction to **centralized operations with SAP Cloud ALM**
+### [workshop #3] Intelligent Day 2 Operations with AI (Day 2 Ops)
+- Introduction to **SAP Automation Pilot** and **SAP Cloud ALM** for Ops scenarios
 - Integration of **SAP Automation Pilot** and **SAP Cloud ALM**
 - Enhancing operations with **SAP AI Core-driven insights**
 
@@ -70,6 +58,12 @@ The focus of the day is simple:
 - Integrating **Automation Pilot with SAP Cloud ALM**
 - Using **AI for analysis and recommendations** on operational data
 - Executing **end-to-end remediation workflows**
+
+**[additional demo] AI Ops Agents with SAP Automation Pilot and Joule:**
+- Creating **MCP servers in SAP Automation Pilot**
+- Brining your **MCP server into Joule Studio**
+- Building and releasing **AI-enabled operations agents**
+- Using **Joule and AI Ops Agents** for intelligent decision-making
 
 💡 **Preconfigured environment:**
 - 40 ready-to-use **SAP BTP subaccounts** for live hands-on exercises  
@@ -90,7 +84,7 @@ To get the most out of this enablement day, please ensure:
 
 ## What You Will Achieve
 
-By the end of this session, you will:
+By the end of all sessions along the AI Enablement Day in SAP Labs Bulgaria, you will learn how to:
 
 - 🚀 Build and deploy an **AI-powered application on SAP BTP**  
 - 🤖 Extend applications with **AI agents using Joule**  
@@ -101,8 +95,6 @@ By the end of this session, you will:
 ---
 
 ## Let’s Build AI in Action!
-
-This enablement day is **fully hands-on and scenario-driven**, giving you real experience with **SAP’s AI ecosystem**.
 
 Come ready to **experiment, build, and automate with AI on SAP BTP**!
 
