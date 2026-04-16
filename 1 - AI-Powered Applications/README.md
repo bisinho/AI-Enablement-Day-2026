@@ -136,7 +136,26 @@ Your manifest has a unique app name and `AICORE_RESOURCE_GROUP=default`.
 
 ---
 
-## 📦 Step 3: SAP BTP subaccount walkthrough (AI Core + AI Launchpad)
+## 📦 Step 3: Enable Cloud Foundry runtime and target org/space
+
+#### Description
+RFQx is deployed to Cloud Foundry.
+
+#### ▶️ Actions
+1. Ensure **Cloud Foundry Environment** is enabled in the subaccount
+2. Ensure you have an **Org** and create a **Space**
+3. (Optional) Log in with the CF CLI and target the correct org/space
+
+<img src="resources/assets/CF_Org_permissions.jpg" alt="CF Org Members – required roles" width="600"/>
+
+<img src="resources/assets/CF_Space_permissions.jpg" alt="CF Space Members – required roles" width="600"/>
+
+#### ✅ Expected Result
+You are targeting the correct CF org and space.
+
+---
+
+## 📦 Step 4: SAP BTP subaccount walkthrough (AI Core + AI Launchpad)
 
 #### Description
 The app calls generative models through **SAP AI Core**.
@@ -146,31 +165,28 @@ The app calls generative models through **SAP AI Core**.
 > - [SAP AI Launchpad – Initial Setup](https://help.sap.com/docs/ai-launchpad/sap-ai-launchpad/initial-setup?locale=en-US&version=CLOUD)
 
 #### ▶️ Actions
-### 3.1 Subscribe to SAP AI Core
-1. BTP Cockpit → Subaccount → **Instances and Subscriptions**
-2. Find **SAP AI Core** and **Subscribe**
-
-### 3.2 Create an AI Core instance + service key
+### 4.1 Create an AI Core instance + service key
 1. BTP Cockpit → **Services** → Instances
 2. Create a new instance of **SAP AI Core**
 3. Create a **Service Key** for that instance
 
 > Workshop note: AI Core usage may be billable depending on your plan/model usage.
 
-### 3.3 Subscribe to AI Launchpad
+### 4.2 Subscribe to AI Launchpad
 1. BTP Cockpit → **Instances and Subscriptions**
 2. Subscribe to **AI Launchpad**
-3. Open AI Launchpad
+3. Make sure you have the necessary **permissions**
+4. Open AI Launchpad
 
 <img src="resources/assets/BTP_Subscriptions.jpg" alt="BTP Instances and Subscriptions – AI Launchpad subscribed, AI Core instance created" width="600"/>
 
 <img src="resources/assets/AILaunchpad_permissions.jpg" alt="AI Launchpad – user role collections required" width="600"/>
 
-### 3.4 Create a model deployment
+### 4.3 Create a model deployment
 In AI Launchpad:
-1. Select your AI Core instance
-2. Ensure the resource group (commonly `default`) is selected/available
-3. Create a **deployment** for the model used in this app (as provided in the enablement materials)
+1. Select your AI Core instance and provide the information from the **service key**
+3. Create a **configuration** for the model used in this app (foundation-models, 0.0.1, azure-openai, gpt-4.1)
+3. Create a **deployment** for the model used in this app and wait for it to become running
 
 <img src="resources/assets/AI_LaunchPad_connection.jpg" alt="AI Launchpad – Workspaces and AI API connection" width="600"/>
 
@@ -180,25 +196,6 @@ In AI Launchpad:
 
 #### ✅ Expected Result
 A model deployment is visible in AI Launchpad and is **RUNNING**.
-
----
-
-## 📦 Step 4: Enable Cloud Foundry runtime and target org/space
-
-#### Description
-RFQx is deployed to Cloud Foundry.
-
-#### ▶️ Actions
-1. Ensure **Cloud Foundry Environment** is enabled in the subaccount
-2. Ensure you have an **Org** and **Space** (or use the provided one)
-3. Log in with the CF CLI and target the correct org/space
-
-<img src="resources/assets/CF_Org_permissions.jpg" alt="CF Org Members – required roles" width="600"/>
-
-<img src="resources/assets/CF_Space_permissions.jpg" alt="CF Space Members – required roles" width="600"/>
-
-#### ✅ Expected Result
-You are targeting the correct CF org and space.
 
 ---
 
@@ -246,42 +243,32 @@ AI-powered features (summarize/compare/chat) work without manually setting secre
 
 ---
 
-## 💻 Optional: Run the App Locally
+## 🧪 Validation / Test Your Result
 
-If you want to test the app on your machine before (or instead of) deploying to Cloud Foundry:
+1. Open the app route.
+2. Quick path: load the demo data (if offered by the UI).
+3. Or upload sample docs:
+   - `1 - AI-Powered Applications/resources/docs/offer1.pdf`
+   - `1 - AI-Powered Applications/resources/docs/offer2.pdf`
+   - `1 - AI-Powered Applications/resources/docs/offer3.pdf`
 
-#### ▶️ Actions
+   > These are fictitious supplier offers responding to a pharmaceutical procurement RFQ, created for demonstration purposes only.
+4. Suggested page flow:
+   - **Project Setup**: create a new project
+   - **Process Documents**: upload docs per provider, select attributes, run extraction
+   - **Compare Providers**: review side-by-side comparison + completeness
+   - **RFQ Insights**: generate the knowledge graph + narrative summary
+   - **Supplier Chat**: ask questions over processed supplier content
 
-```bash
-# From the app folder
-cd "1 - AI-Powered Applications/resources/app/rfqx-doc-analysis-utilities"
+Expected:
+- ✔ A comparison summary is generated
+- ✔ Knowledge graph / insights are produced
+- ✔ AI summaries and chat respond successfully
 
-# Create virtual environment
-python -m venv venv
-
-# Activate it (macOS/Linux)
-source venv/bin/activate
-# On Windows:
-# venv\Scripts\activate
-
-# Install dependencies
-pip install -r requirements.txt
-
-# Run the app
-streamlit run RFQx.py
-```
-
-You still need AI Core credentials. Set them as environment variables before running (using the shared service key provided for the workshop, or your own service key):
-
-```bash
-export AICORE_AUTH_URL=...
-export AICORE_CLIENT_ID=...
-export AICORE_CLIENT_SECRET=...
-export AICORE_BASE_URL=...
-export AICORE_RESOURCE_GROUP=default
-```
-
-> The app will be available at `http://localhost:8501` by default.
+### Technologies to point out
+- Streamlit session state + reusable UI components
+- Knowledge graph generation from extracted attributes
+- `generative-ai-hub-sdk` for calling AI Core deployments
 
 ---
 
@@ -382,38 +369,50 @@ The LLM is instructed to reason **exclusively** from the graph triples, not from
 
 ---
 
-## 🧪 Validation / Test Your Result
-
-1. Open the app route.
-2. Quick path: load the demo data (if offered by the UI).
-3. Or upload sample docs:
-   - `1 - AI-Powered Applications/resources/docs/offer1.pdf`
-   - `1 - AI-Powered Applications/resources/docs/offer2.pdf`
-   - `1 - AI-Powered Applications/resources/docs/offer3.pdf`
-
-   > These are fictitious supplier offers responding to a pharmaceutical procurement RFQ, created for demonstration purposes only.
-4. Suggested page flow:
-   - **Project Setup**: create a new project
-   - **Process Documents**: upload docs per provider, select attributes, run extraction
-   - **Compare Providers**: review side-by-side comparison + completeness
-   - **RFQ Insights**: generate the knowledge graph + narrative summary
-   - **Supplier Chat**: ask questions over processed supplier content
-
-Expected:
-- ✔ A comparison summary is generated
-- ✔ Knowledge graph / insights are produced
-- ✔ AI summaries and chat respond successfully
-
-### Technologies to point out
-- Streamlit session state + reusable UI components
-- Knowledge graph generation from extracted attributes
-- `generative-ai-hub-sdk` for calling AI Core deployments
-
 ### Storage behavior (important)
 RFQx is designed for workshop/demo usage:
 - The app does **not provide persistent storage**.
 - Projects and uploaded documents are available **only while the app session is alive and the app is running**.
 - If the app is stopped/restarted/redeployed, previously uploaded projects may no longer be available.
+
+---
+
+## 💻 Optional: Run the App Locally
+
+If you want to test the app on your machine before (or instead of) deploying to Cloud Foundry:
+
+#### ▶️ Actions
+
+```bash
+# From the app folder
+cd "1 - AI-Powered Applications/resources/app/rfqx-doc-analysis-utilities"
+
+# Create virtual environment
+python -m venv venv
+
+# Activate it (macOS/Linux)
+source venv/bin/activate
+# On Windows:
+# venv\Scripts\activate
+
+# Install dependencies
+pip install -r requirements.txt
+
+# Run the app
+streamlit run RFQx.py
+```
+
+You still need AI Core credentials. Set them as environment variables before running (using the shared service key provided for the workshop, or your own service key):
+
+```bash
+export AICORE_AUTH_URL=...
+export AICORE_CLIENT_ID=...
+export AICORE_CLIENT_SECRET=...
+export AICORE_BASE_URL=...
+export AICORE_RESOURCE_GROUP=default
+```
+
+> The app will be available at `http://localhost:8501` by default.
 
 ---
 
@@ -444,7 +443,7 @@ RFQx is designed for workshop/demo usage:
 ## Optional note: Cost / quota disclaimer
 
 - **SAP AI Core usage may be billable** depending on your plan and the model used.
-- For enablement sessions, a **shared service key** may be provided to avoid charging attendees.
+- For enablement sessions, a **shared service key** will be provided to avoid charging attendees.
 - We still demonstrate **service binding** as the recommended enterprise pattern.
 
 ---
