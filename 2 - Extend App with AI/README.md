@@ -1,4 +1,4 @@
-# 🧪 Exercise #2: {Tile Goes Here}
+# 🧪 Topic #2: {Tile Goes Here}
 
 ## 🎯 Objective
 
