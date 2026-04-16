@@ -1,7 +1,7 @@
-# Workshop #3 | Intelligent Day 2 Operations with AI
+# Topic #3 | Intelligent Day 2 Operations with AI
 
 ## Description
-This repository contains the material for the Workshop #3  - **"Intelligent Day 2 Operations with AI"**
+This repository contains the material for the Topic #3  - **"Intelligent Day 2 Operations with AI"**
 
 
 ## Overview
