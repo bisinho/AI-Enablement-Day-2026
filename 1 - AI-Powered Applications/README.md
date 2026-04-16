@@ -1,5 +1,7 @@
 # 🧪 Exercise #1: RFQx – AI-Powered RFQ Document Analysis (SAP AI Core + Cloud Foundry)
 
+> **Original project:** This exercise is based on the [RFQx Document Analysis Application](https://ai4u-website.cfapps.eu10-004.hana.ondemand.com/project/sap-rfqx-document-analysis-application) from the SAP AI for You initiative.
+
 ## 🎯 Objective
 
 By the end of this exercise, you will:
@@ -50,11 +52,49 @@ You are supporting a procurement process where multiple suppliers respond to an 
 - build a **knowledge graph** from extracted facts
 - generate AI-powered summaries and enable conversational Q&A over processed content
 
-### Storage behavior (important)
-RFQx is designed for workshop/demo usage:
-- The app does **not provide persistent storage**.
-- Projects and uploaded documents are available **only while the app session is alive and the app is running**.
-- If the app is stopped/restarted/redeployed, previously uploaded projects may no longer be available.
+---
+
+## 📱 App Overview
+
+RFQx is a five-page Streamlit application. Here is a quick look at each step of the workflow:
+
+**1. Project Setup** — Create a new RFQ analysis project or resume an existing one. Projects act as containers for all supplier documents and extracted data within a session.
+
+<img src="resources/assets/RFQ_app_createProject.jpg" alt="Project Setup page – create or load a project" width="700"/>
+
+---
+
+**2. Process Documents** — Define how many suppliers to compare, name each one, and upload their RFQ response documents (PDF, XLSX, CSV). Trigger AI extraction with a single click once all documents are attached.
+
+> **Additional Note:** This demo uses manual file upload to keep the setup self-contained. In a real implementation the document ingestion step can be replaced or augmented by a direct connection to backend systems — SAP S/4HANA, SAP Ariba, HANA databases, or any other enterprise data source — so procurement data flows in automatically without manual upload.
+
+> Because the app runs entirely on **SAP BTP infrastructure**, all data stays within your controlled environment — no information leaves your landscape. This also means the app can work with sensitive internal documents, complex multi-page contracts, or proprietary supplier data that could never be sent to a public SaaS tool. The tight integration with the SAP ecosystem makes it straightforward to connect additional enterprise systems and enrich the analysis with live operational data.
+
+<img src="resources/assets/RFQ_app_selectSupplierNamesAndAttachRelevantDocumentsPerBidderAndAnalyzeInfo.jpg" alt="Process Documents – upload supplier documents and trigger extraction" width="700"/>
+
+---
+
+**3. Attribute Selection** — Before extraction runs, choose exactly which attributes the AI should pull from the documents — from project information and key dates to technical requirements and pricing. All attributes are grouped by category and can be toggled individually or in bulk.
+
+<img src="resources/assets/RFQ_app_processingForm_selectAttributesForGraphConstruction.jpg" alt="Attribute extraction configuration – select fields for the knowledge graph" width="700"/>
+
+---
+
+**4. Compare Providers** — Side-by-side comparison of all extracted attributes across suppliers. A completeness score per supplier shows how thoroughly each document answered the RFQ requirements, making gaps immediately visible.
+
+<img src="resources/assets/RFQ_app_analyzeAndCompareTheSelectedProviders.jpg" alt="Compare Providers – completeness scores and attribute comparison" width="700"/>
+
+---
+
+**5. RFQ Recommender** — Generates a comprehensive analysis report driven by the knowledge graph: executive summary, detailed Markdown comparison table, strengths and weaknesses per supplier, country risk factors, and a final recommendation. An interactive graph visualisation of supplier connections is also available.
+
+<img src="resources/assets/RFQ_app_getRecommendationsInsightsAboutBiddersAndGraphVisualizationOfConnections.jpg" alt="RFQ Recommender – AI-generated report and knowledge graph visualisation" width="700"/>
+
+---
+
+**6. Supplier Chat** — Conversational Q&A over the processed supplier documents. Select one or more suppliers to query, choose a query mode (single supplier or comparative analysis), pick from suggested questions or type your own, and get streaming AI answers grounded in the document content.
+
+<img src="resources/assets/RFQ_app_chatWithDocuments.jpg" alt="Supplier Chat – ask questions across supplier documents with streaming responses" width="700"/>
 
 ---
 
@@ -96,58 +136,15 @@ Your manifest has a unique app name and `AICORE_RESOURCE_GROUP=default`.
 
 ---
 
-## 📦 Step 3: SAP BTP subaccount walkthrough (AI Core + AI Launchpad)
-
-#### Description
-The app calls generative models through **SAP AI Core**.
-
-#### ▶️ Actions
-### 3.1 Subscribe to SAP AI Core
-1. BTP Cockpit → Subaccount → **Instances and Subscriptions**
-2. Find **SAP AI Core** and **Subscribe**
-
-### 3.2 Create an AI Core instance + service key
-1. BTP Cockpit → **Services** → Instances
-2. Create a new instance of **SAP AI Core**
-3. Create a **Service Key** for that instance
-
-> Workshop note: AI Core usage may be billable depending on your plan/model usage.
-
-### 3.3 Subscribe to AI Launchpad
-1. BTP Cockpit → **Instances and Subscriptions**
-2. Subscribe to **AI Launchpad**
-3. Open AI Launchpad
-
-<img src="resources/assets/BTP_Subscriptions.jpg" alt="BTP Instances and Subscriptions – AI Launchpad subscribed, AI Core instance created" width="600"/>
-
-<img src="resources/assets/AILaunchpad_permissions.jpg" alt="AI Launchpad – user role collections required" width="600"/>
-
-### 3.4 Create a model deployment
-In AI Launchpad:
-1. Select your AI Core instance
-2. Ensure the resource group (commonly `default`) is selected/available
-3. Create a **deployment** for the model used in this app (as provided in the enablement materials)
-
-<img src="resources/assets/AI_LaunchPad_connection.jpg" alt="AI Launchpad – Workspaces and AI API connection" width="600"/>
-
-<img src="resources/assets/AI_LaunchPad_ModelConfigurration.jpg" alt="AI Launchpad – model configuration (gpt-4.1)" width="600"/>
-
-<img src="resources/assets/AI_LaunchPad_ModelDeployment.jpg" alt="AI Launchpad – deployment status RUNNING" width="600"/>
-
-#### ✅ Expected Result
-A model deployment is visible in AI Launchpad and is **RUNNING**.
-
----
-
-## 📦 Step 4: Enable Cloud Foundry runtime and target org/space
+## 📦 Step 3: Enable Cloud Foundry runtime and target org/space
 
 #### Description
 RFQx is deployed to Cloud Foundry.
 
 #### ▶️ Actions
 1. Ensure **Cloud Foundry Environment** is enabled in the subaccount
-2. Ensure you have an **Org** and **Space** (or use the provided one)
-3. Log in with the CF CLI and target the correct org/space
+2. Ensure you have an **Org** and create a **Space**
+3. (Optional) Log in with the CF CLI and target the correct org/space
 
 <img src="resources/assets/CF_Org_permissions.jpg" alt="CF Org Members – required roles" width="600"/>
 
@@ -158,86 +155,155 @@ You are targeting the correct CF org and space.
 
 ---
 
-## 📦 Step 5: Deploy the app to Cloud Foundry (archive + manifest)
+## 📦 Step 4: SAP AI Core + AI Launchpad setup *(presenter demo)*
 
 #### Description
-Use the prebuilt archive `Archive.zip` to deploy a clean package (no caches, no secrets).
+
+This step is **performed live by the presenter** while attendees watch. It demonstrates the full enterprise setup: provisioning AI Core, subscribing to AI Launchpad, and creating a running model deployment. Attendees do **not** need to repeat this — they will connect to the presenter's AI Core instance using a shared service key in Step 6.
+
+> 📖 Official setup documentation:
+> - [SAP AI Core – Initial Setup](https://help.sap.com/docs/sap-ai-core/sap-ai-core-service-guide/initial-setup?locale=en-US&version=CLOUD)
+> - [SAP AI Launchpad – Initial Setup](https://help.sap.com/docs/ai-launchpad/sap-ai-launchpad/initial-setup?locale=en-US&version=CLOUD)
+
+> **Why the presenter does this and attendees don't:** SAP AI Core usage is billable. To avoid charging each attendee, the presenter runs a single shared AI Core instance and provides its service key credentials for the workshop. This also mirrors a realistic enterprise setup where one team administers AI Core and other teams consume it.
+
+#### ▶️ Actions (presenter)
+
+### 4.1 Create an AI Core service instance + service key
+1. BTP Cockpit → **Services** → **Instances and Subscriptions**
+2. Create a new instance of **SAP AI Core** (plan: `extended`)
+3. Create a **Service Key** for that instance — this key contains the credentials (`clientid`, `clientsecret`, `url`, `AI_API_URL`) that will be shared with attendees
+
+<img src="resources/assets/BTP_Subscriptions.jpg" alt="BTP Instances and Subscriptions – AI Launchpad subscribed, AI Core instance created" width="600"/>
+
+<img src="resources/assets/Binding_KeyInfo.jpg" alt="Service key credentials – clientid, clientsecret, url, AI_API_URL" width="600"/>
+
+> Workshop note: AI Core usage may be billable depending on your plan/model usage.
+
+### 4.2 Subscribe to AI Launchpad and assign permissions
+1. BTP Cockpit → **Instances and Subscriptions** → Subscribe to **SAP AI Launchpad**
+2. Assign the required role collections to users who need access
+
+<img src="resources/assets/AILaunchpad_permissions.jpg" alt="AI Launchpad – user role collections required" width="600"/>
+
+### 4.3 Connect AI Launchpad to the AI Core instance
+1. Open AI Launchpad
+2. In **Workspaces**, add a new **AI API Connection** pointing to the AI Core instance
+
+<img src="resources/assets/AI_LaunchPad_connection.jpg" alt="AI Launchpad – Workspaces and AI API connection" width="600"/>
+
+### 4.4 Create a model configuration and deployment
+1. In AI Launchpad → **ML Operations** → **Configurations**, create a new configuration:
+   - Scenario: `foundation-models`, Version `0.0.1`
+   - Executable: `azure-openai`
+   - Model name: `gpt-4.1`
+2. From that configuration, click **Create Deployment** and wait until status is **RUNNING**
+
+<img src="resources/assets/AI_LaunchPad_ModelConfigurration.jpg" alt="AI Launchpad – model configuration (gpt-4.1)" width="600"/>
+
+<img src="resources/assets/AI_LaunchPad_ModelDeployment.jpg" alt="AI Launchpad – deployment status RUNNING" width="600"/>
+
+#### ✅ Expected Result
+A `gpt-4.1` deployment is visible in AI Launchpad with status **RUNNING**. The presenter shares the service key credentials with attendees for use in Step 6.
+
+---
+
+## 📦 Step 5: Deploy the app to Cloud Foundry *(everyone)*
+
+#### Description
+Everyone deploys their own instance of the RFQx app to their CF space using the prebuilt archive. The app starts without AI credentials at this point — those are added in Step 6.
 
 #### ▶️ Actions
 1. From `1 - AI-Powered Applications/resources/app/rfqx-doc-analysis-utilities/`, deploy using:
-   - `manifest.yml`
+   - `manifest.yml` (with your unique app name from Step 2)
    - `Archive.zip`
 
 > Note: The archive intentionally excludes local virtual envs, caches (`__pycache__`), and `.env` secrets.
-
-#### ✅ Expected Result
-The app stages successfully and you can open the Streamlit UI via the created route.
 
 <img src="resources/assets/CF_Deploy_App.jpg" alt="CF – Deploy Application dialog: Archive.zip + manifest.yml" width="600"/>
 
 <img src="resources/assets/CF_Space_and_app.jpg" alt="CF Space – application deployed and Started" width="600"/>
 
+#### ✅ Expected Result
+The app is deployed and shows **Started** in your CF space. The Streamlit UI is accessible via the generated route, but AI features will not work yet until credentials are connected in Step 6.
+
 ---
 
-## 📦 Step 6: Option 1 (recommended): Service Binding to AI Core
+## 📦 Step 6: Connect AI Core credentials to the app
 
-#### Description
-With service binding, the app reads AI Core credentials from the bound service (via `VCAP_SERVICES`), avoiding secrets in files. This is the recommended enterprise pattern.
+This step works differently for the presenter and attendees. Both end up with a running app that can call AI Core — they just do it through different credential mechanisms.
 
-**Two approaches exist — they are intentionally different:**
-- **Tutor demo (recommended enterprise pattern):** Service Binding + credentials via `VCAP_SERVICES` — no secrets copied into files; credentials are injected into the app container at runtime.
-- **Attendees (workshop mode):** Set environment variables based on a shared service key — no CF service instance/binding required. A shared service key (read-only / restricted where possible) is provided for the workshop to avoid charging attendees. Do not reuse these keys outside the workshop.
+---
 
-#### ▶️ Actions (Service Binding – tutor / enterprise pattern)
-1. In Cloud Foundry, create or reuse an **AI Core service instance** in your space
-2. Bind the AI Core instance to your deployed RFQx app
-3. Restage/restart the app so the binding credentials are injected via `VCAP_SERVICES`
+### 👨‍🏫 Presenter — Service Binding *(enterprise pattern)*
+
+The presenter binds the AI Core service instance directly to the CF app. At runtime, Cloud Foundry injects the credentials automatically via the `VCAP_SERVICES` environment variable. No secrets are copied into files or environment variables manually — this is the recommended approach for production.
+
+#### ▶️ Actions
+1. In BTP Cockpit → your CF Space → the deployed RFQx app → **Service Bindings**
+2. Click **Bind Service Instance** and select the AI Core instance
+3. **Restage** the app so the binding takes effect
 
 <img src="resources/assets/CF_ServiceBinding.jpg" alt="CF – Service Binding: AI Core instance bound to the app" width="600"/>
 
-<img src="resources/assets/Binding_KeyInfo.jpg" alt="Service key credentials – clientid, clientsecret, url, AI_API_URL" width="600"/>
+The `generative-ai-hub-sdk` reads `VCAP_SERVICES` automatically — no code changes needed.
 
 #### ✅ Expected Result
-AI-powered features (summarize/compare/chat) work without manually setting secrets.
+AI features work. The credentials are injected by the platform at runtime and never appear in config files.
 
 ---
 
-## 💻 Optional: Run the App Locally
+### 👥 Attendees — Environment Variables via shared service key
 
-If you want to test the app on your machine before (or instead of) deploying to Cloud Foundry:
+Attendees use the service key credentials shared by the presenter. Instead of creating their own AI Core instance (which would be billable), they authenticate to the presenter's instance by setting the key fields as CF environment variables on their deployed app.
 
 #### ▶️ Actions
+1. In BTP Cockpit → your CF Space → your deployed RFQx app → **User-Provided Variables** (or via CF CLI)
+2. Set the following environment variables using the values from the shared service key:
 
-```bash
-# From the app folder
-cd "1 - AI-Powered Applications/resources/app/rfqx-doc-analysis-utilities"
+| Variable | Source field in service key |
+|---|---|
+| `AICORE_AUTH_URL` | `url` |
+| `AICORE_CLIENT_ID` | `clientid` |
+| `AICORE_CLIENT_SECRET` | `clientsecret` |
+| `AICORE_BASE_URL` | `serviceurls.AI_API_URL` |
+| `AICORE_RESOURCE_GROUP` | `default` |
 
-# Create virtual environment
-python -m venv venv
+3. **Restage** the app after setting the variables
 
-# Activate it (macOS/Linux)
-source venv/bin/activate
-# On Windows:
-# venv\Scripts\activate
+> Do not share or reuse these credentials outside the workshop session.
 
-# Install dependencies
-pip install -r requirements.txt
+#### ✅ Expected Result
+AI-powered features (extraction, comparison, chat) work using the presenter's AI Core deployment.
 
-# Run the app
-streamlit run RFQx.py
-```
+---
 
-You still need AI Core credentials. Set them as environment variables before running (using the shared service key provided for the workshop, or your own service key):
+## 🧪 Validation / Test Your Result
 
-```bash
-export AICORE_AUTH_URL=...
-export AICORE_CLIENT_ID=...
-export AICORE_CLIENT_SECRET=...
-export AICORE_BASE_URL=...
-export AICORE_RESOURCE_GROUP=default
-```
+1. Open the app route.
+2. Quick path: load the demo data (if offered by the UI).
+3. Or upload sample docs:
+   - `1 - AI-Powered Applications/resources/docs/offer1.pdf`
+   - `1 - AI-Powered Applications/resources/docs/offer2.pdf`
+   - `1 - AI-Powered Applications/resources/docs/offer3.pdf`
 
-> The app will be available at `http://localhost:8501` by default.
+   > These are fictitious supplier offers responding to a pharmaceutical procurement RFQ, created for demonstration purposes only.
+4. Suggested page flow:
+   - **Project Setup**: create a new project
+   - **Process Documents**: upload docs per provider, select attributes, run extraction
+   - **Compare Providers**: review side-by-side comparison + completeness
+   - **RFQ Insights**: generate the knowledge graph + narrative summary
+   - **Supplier Chat**: ask questions over processed supplier content
+
+Expected:
+- ✔ A comparison summary is generated
+- ✔ Knowledge graph / insights are produced
+- ✔ AI summaries and chat respond successfully
+
+### Technologies to point out
+- Streamlit session state + reusable UI components
+- Knowledge graph generation from extracted attributes
+- `generative-ai-hub-sdk` for calling AI Core deployments
 
 ---
 
@@ -338,32 +404,50 @@ The LLM is instructed to reason **exclusively** from the graph triples, not from
 
 ---
 
-## 🧪 Validation / Test Your Result
+### Storage behavior (important)
+RFQx is designed for workshop/demo usage:
+- The app does **not provide persistent storage**.
+- Projects and uploaded documents are available **only while the app session is alive and the app is running**.
+- If the app is stopped/restarted/redeployed, previously uploaded projects may no longer be available.
 
-1. Open the app route.
-2. Quick path: load the demo data (if offered by the UI).
-3. Or upload sample docs:
-   - `1 - AI-Powered Applications/resources/docs/offer1.pdf`
-   - `1 - AI-Powered Applications/resources/docs/offer2.pdf`
-   - `1 - AI-Powered Applications/resources/docs/offer3.pdf`
+---
 
-   > These are fictitious supplier offers responding to a pharmaceutical procurement RFQ, created for demonstration purposes only.
-4. Suggested page flow:
-   - **Project Setup**: create a new project
-   - **Process Documents**: upload docs per provider, select attributes, run extraction
-   - **Compare Providers**: review side-by-side comparison + completeness
-   - **RFQ Insights**: generate the knowledge graph + narrative summary
-   - **Supplier Chat**: ask questions over processed supplier content
+## 💻 Optional: Run the App Locally
 
-Expected:
-- ✔ A comparison summary is generated
-- ✔ Knowledge graph / insights are produced
-- ✔ AI summaries and chat respond successfully
+If you want to test the app on your machine before (or instead of) deploying to Cloud Foundry:
 
-### Technologies to point out
-- Streamlit session state + reusable UI components
-- Knowledge graph generation from extracted attributes
-- `generative-ai-hub-sdk` for calling AI Core deployments
+#### ▶️ Actions
+
+```bash
+# From the app folder
+cd "1 - AI-Powered Applications/resources/app/rfqx-doc-analysis-utilities"
+
+# Create virtual environment
+python -m venv venv
+
+# Activate it (macOS/Linux)
+source venv/bin/activate
+# On Windows:
+# venv\Scripts\activate
+
+# Install dependencies
+pip install -r requirements.txt
+
+# Run the app
+streamlit run RFQx.py
+```
+
+You still need AI Core credentials. Set them as environment variables before running (using the shared service key provided for the workshop, or your own service key):
+
+```bash
+export AICORE_AUTH_URL=...
+export AICORE_CLIENT_ID=...
+export AICORE_CLIENT_SECRET=...
+export AICORE_BASE_URL=...
+export AICORE_RESOURCE_GROUP=default
+```
+
+> The app will be available at `http://localhost:8501` by default.
 
 ---
 
@@ -394,7 +478,7 @@ Expected:
 ## Optional note: Cost / quota disclaimer
 
 - **SAP AI Core usage may be billable** depending on your plan and the model used.
-- For enablement sessions, a **shared service key** may be provided to avoid charging attendees.
+- For enablement sessions, a **shared service key** will be provided to avoid charging attendees.
 - We still demonstrate **service binding** as the recommended enterprise pattern.
 
 ---
