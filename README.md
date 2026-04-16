@@ -99,3 +99,7 @@ By the end of all sessions along the AI Enablement Day in SAP Labs Bulgaria, you
 Come ready to **experiment, build, and automate with AI on SAP BTP**!
 
 👉 **Need help? Reach out to the instructors during the session—we’re here to support you!**
+
+## License
+Copyright (c) 2026 SAP SE or an SAP affiliate company. All rights reserved. This project is licensed under the Apache Software License, version 2.0 except as noted otherwise in the [LICENSE](LICENSES/Apache-2.0.txt) file.
+
