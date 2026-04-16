@@ -155,91 +155,126 @@ You are targeting the correct CF org and space.
 
 ---
 
-## 📦 Step 4: SAP BTP subaccount walkthrough (AI Core + AI Launchpad)
+## 📦 Step 4: SAP AI Core + AI Launchpad setup *(presenter demo)*
 
 #### Description
-The app calls generative models through **SAP AI Core**.
+
+This step is **performed live by the presenter** while attendees watch. It demonstrates the full enterprise setup: provisioning AI Core, subscribing to AI Launchpad, and creating a running model deployment. Attendees do **not** need to repeat this — they will connect to the presenter's AI Core instance using a shared service key in Step 6.
 
 > 📖 Official setup documentation:
 > - [SAP AI Core – Initial Setup](https://help.sap.com/docs/sap-ai-core/sap-ai-core-service-guide/initial-setup?locale=en-US&version=CLOUD)
 > - [SAP AI Launchpad – Initial Setup](https://help.sap.com/docs/ai-launchpad/sap-ai-launchpad/initial-setup?locale=en-US&version=CLOUD)
 
-#### ▶️ Actions
-### 4.1 Create an AI Core instance + service key
-1. BTP Cockpit → **Services** → Instances
-2. Create a new instance of **SAP AI Core**
-3. Create a **Service Key** for that instance
+> **Why the presenter does this and attendees don't:** SAP AI Core usage is billable. To avoid charging each attendee, the presenter runs a single shared AI Core instance and provides its service key credentials for the workshop. This also mirrors a realistic enterprise setup where one team administers AI Core and other teams consume it.
 
-> Workshop note: AI Core usage may be billable depending on your plan/model usage.
+#### ▶️ Actions (presenter)
 
-### 4.2 Subscribe to AI Launchpad
-1. BTP Cockpit → **Instances and Subscriptions**
-2. Subscribe to **AI Launchpad**
-3. Make sure you have the necessary **permissions**
-4. Open AI Launchpad
+### 4.1 Create an AI Core service instance + service key
+1. BTP Cockpit → **Services** → **Instances and Subscriptions**
+2. Create a new instance of **SAP AI Core** (plan: `extended`)
+3. Create a **Service Key** for that instance — this key contains the credentials (`clientid`, `clientsecret`, `url`, `AI_API_URL`) that will be shared with attendees
 
 <img src="resources/assets/BTP_Subscriptions.jpg" alt="BTP Instances and Subscriptions – AI Launchpad subscribed, AI Core instance created" width="600"/>
 
+<img src="resources/assets/Binding_KeyInfo.jpg" alt="Service key credentials – clientid, clientsecret, url, AI_API_URL" width="600"/>
+
+> Workshop note: AI Core usage may be billable depending on your plan/model usage.
+
+### 4.2 Subscribe to AI Launchpad and assign permissions
+1. BTP Cockpit → **Instances and Subscriptions** → Subscribe to **SAP AI Launchpad**
+2. Assign the required role collections to users who need access
+
 <img src="resources/assets/AILaunchpad_permissions.jpg" alt="AI Launchpad – user role collections required" width="600"/>
 
-### 4.3 Create a model deployment
-In AI Launchpad:
-1. Select your AI Core instance and provide the information from the **service key**
-3. Create a **configuration** for the model used in this app (foundation-models, 0.0.1, azure-openai, gpt-4.1)
-3. Create a **deployment** for the model used in this app and wait for it to become running
+### 4.3 Connect AI Launchpad to the AI Core instance
+1. Open AI Launchpad
+2. In **Workspaces**, add a new **AI API Connection** pointing to the AI Core instance
 
 <img src="resources/assets/AI_LaunchPad_connection.jpg" alt="AI Launchpad – Workspaces and AI API connection" width="600"/>
+
+### 4.4 Create a model configuration and deployment
+1. In AI Launchpad → **ML Operations** → **Configurations**, create a new configuration:
+   - Scenario: `foundation-models`, Version `0.0.1`
+   - Executable: `azure-openai`
+   - Model name: `gpt-4.1`
+2. From that configuration, click **Create Deployment** and wait until status is **RUNNING**
 
 <img src="resources/assets/AI_LaunchPad_ModelConfigurration.jpg" alt="AI Launchpad – model configuration (gpt-4.1)" width="600"/>
 
 <img src="resources/assets/AI_LaunchPad_ModelDeployment.jpg" alt="AI Launchpad – deployment status RUNNING" width="600"/>
 
 #### ✅ Expected Result
-A model deployment is visible in AI Launchpad and is **RUNNING**.
+A `gpt-4.1` deployment is visible in AI Launchpad with status **RUNNING**. The presenter shares the service key credentials with attendees for use in Step 6.
 
 ---
 
-## 📦 Step 5: Deploy the app to Cloud Foundry (archive + manifest)
+## 📦 Step 5: Deploy the app to Cloud Foundry *(everyone)*
 
 #### Description
-Use the prebuilt archive `Archive.zip` to deploy a clean package (no caches, no secrets).
+Everyone deploys their own instance of the RFQx app to their CF space using the prebuilt archive. The app starts without AI credentials at this point — those are added in Step 6.
 
 #### ▶️ Actions
 1. From `1 - AI-Powered Applications/resources/app/rfqx-doc-analysis-utilities/`, deploy using:
-   - `manifest.yml`
+   - `manifest.yml` (with your unique app name from Step 2)
    - `Archive.zip`
 
 > Note: The archive intentionally excludes local virtual envs, caches (`__pycache__`), and `.env` secrets.
-
-#### ✅ Expected Result
-The app stages successfully and you can open the Streamlit UI via the created route.
 
 <img src="resources/assets/CF_Deploy_App.jpg" alt="CF – Deploy Application dialog: Archive.zip + manifest.yml" width="600"/>
 
 <img src="resources/assets/CF_Space_and_app.jpg" alt="CF Space – application deployed and Started" width="600"/>
 
+#### ✅ Expected Result
+The app is deployed and shows **Started** in your CF space. The Streamlit UI is accessible via the generated route, but AI features will not work yet until credentials are connected in Step 6.
+
 ---
 
-## 📦 Step 6: Option 1 (recommended): Service Binding to AI Core
+## 📦 Step 6: Connect AI Core credentials to the app
 
-#### Description
-With service binding, the app reads AI Core credentials from the bound service (via `VCAP_SERVICES`), avoiding secrets in files. This is the recommended enterprise pattern.
+This step works differently for the presenter and attendees. Both end up with a running app that can call AI Core — they just do it through different credential mechanisms.
 
-**Two approaches exist — they are intentionally different:**
-- **Tutor demo (recommended enterprise pattern):** Service Binding + credentials via `VCAP_SERVICES` — no secrets copied into files; credentials are injected into the app container at runtime.
-- **Attendees (workshop mode):** Set environment variables based on a shared service key — no CF service instance/binding required. A shared service key (read-only / restricted where possible) is provided for the workshop to avoid charging attendees. Do not reuse these keys outside the workshop.
+---
 
-#### ▶️ Actions (Service Binding – tutor / enterprise pattern)
-1. In Cloud Foundry, create or reuse an **AI Core service instance** in your space
-2. Bind the AI Core instance to your deployed RFQx app
-3. Restage/restart the app so the binding credentials are injected via `VCAP_SERVICES`
+### 👨‍🏫 Presenter — Service Binding *(enterprise pattern)*
+
+The presenter binds the AI Core service instance directly to the CF app. At runtime, Cloud Foundry injects the credentials automatically via the `VCAP_SERVICES` environment variable. No secrets are copied into files or environment variables manually — this is the recommended approach for production.
+
+#### ▶️ Actions
+1. In BTP Cockpit → your CF Space → the deployed RFQx app → **Service Bindings**
+2. Click **Bind Service Instance** and select the AI Core instance
+3. **Restage** the app so the binding takes effect
 
 <img src="resources/assets/CF_ServiceBinding.jpg" alt="CF – Service Binding: AI Core instance bound to the app" width="600"/>
 
-<img src="resources/assets/Binding_KeyInfo.jpg" alt="Service key credentials – clientid, clientsecret, url, AI_API_URL" width="600"/>
+The `generative-ai-hub-sdk` reads `VCAP_SERVICES` automatically — no code changes needed.
 
 #### ✅ Expected Result
-AI-powered features (summarize/compare/chat) work without manually setting secrets.
+AI features work. The credentials are injected by the platform at runtime and never appear in config files.
+
+---
+
+### 👥 Attendees — Environment Variables via shared service key
+
+Attendees use the service key credentials shared by the presenter. Instead of creating their own AI Core instance (which would be billable), they authenticate to the presenter's instance by setting the key fields as CF environment variables on their deployed app.
+
+#### ▶️ Actions
+1. In BTP Cockpit → your CF Space → your deployed RFQx app → **User-Provided Variables** (or via CF CLI)
+2. Set the following environment variables using the values from the shared service key:
+
+| Variable | Source field in service key |
+|---|---|
+| `AICORE_AUTH_URL` | `url` |
+| `AICORE_CLIENT_ID` | `clientid` |
+| `AICORE_CLIENT_SECRET` | `clientsecret` |
+| `AICORE_BASE_URL` | `serviceurls.AI_API_URL` |
+| `AICORE_RESOURCE_GROUP` | `default` |
+
+3. **Restage** the app after setting the variables
+
+> Do not share or reuse these credentials outside the workshop session.
+
+#### ✅ Expected Result
+AI-powered features (extraction, comparison, chat) work using the presenter's AI Core deployment.
 
 ---
 
