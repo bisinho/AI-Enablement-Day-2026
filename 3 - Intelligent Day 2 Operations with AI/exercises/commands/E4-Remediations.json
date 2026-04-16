@@ -1,0 +1,278 @@
+{
+  "id": "TechEdRA-<<<TENANT_ID>>>",
+  "technicalName": "TechEdRA",
+  "name": "XP267 Ex04 - Remedition Actions",
+  "description": "",
+  "owner": "<<<TENANT_ID>>>",
+  "tags": {},
+  "inputs": [],
+  "commands": [
+    {
+      "configuration": {
+        "values": [],
+        "output": {
+          "getAppEvents": "$(.getAppEvents.output.eventsData)",
+          "restartAppOutput": "$(.restartApp.output.resourceInstancesStates)",
+          "getAppStateOutput": "$(.getAppState.output.stateData)"
+        },
+        "executors": [
+          {
+            "execute": "applm-sapcp:GetCfAppState:2",
+            "input": {
+              "resourceGroup": "$(.execution.input.resourceGroup)",
+              "password": "$(.execution.input.password)",
+              "resourceName": "$(.execution.input.resourceName)",
+              "region": "$(.execution.input.region)",
+              "user": "$(.execution.input.user)",
+              "subAccount": "$(.execution.input.subAccount)",
+              "identityProvider": "tdct3ched1-platform"
+            },
+            "alias": "getAppState",
+            "description": null,
+            "progressMessage": null,
+            "initialDelay": null,
+            "pause": null,
+            "when": null,
+            "validate": null,
+            "autoRetry": null,
+            "repeat": null,
+            "errorMessages": [],
+            "dryRun": null
+          },
+          {
+            "execute": "monitoring-sapcp:GetCfAppEvents:1",
+            "input": {
+              "resourceGroup": "$(.execution.input.resourceGroup)",
+              "password": "$(.execution.input.password)",
+              "eventsNumber": "20",
+              "resourceName": "$(.execution.input.resourceName)",
+              "region": "$(.execution.input.region)",
+              "user": "$(.execution.input.user)",
+              "subAccount": "$(.execution.input.subAccount)",
+              "identityProvider": "tdct3ched1-platform"
+            },
+            "alias": "getAppEvents",
+            "description": null,
+            "progressMessage": null,
+            "initialDelay": null,
+            "pause": null,
+            "when": null,
+            "validate": null,
+            "autoRetry": null,
+            "repeat": null,
+            "errorMessages": [],
+            "dryRun": null
+          },
+          {
+            "execute": "applm-sapcp:SetCfAppResources:1",
+            "input": {
+              "resourceGroup": "$(.execution.input.resourceGroup)",
+              "password": "$(.execution.input.password)",
+              "memory": "$(.getAppState.output.memory + 256)",
+              "resourceName": "$(.execution.input.resourceName)",
+              "region": "$(.execution.input.region)",
+              "user": "$(.execution.input.user)",
+              "subAccount": "$(.execution.input.subAccount)",
+              "identityProvider": "tdct3ched1-platform"
+            },
+            "alias": "setAppResources",
+            "description": null,
+            "progressMessage": null,
+            "initialDelay": null,
+            "pause": null,
+            "when": null,
+            "validate": null,
+            "autoRetry": null,
+            "repeat": null,
+            "errorMessages": [],
+            "dryRun": null
+          },
+          {
+            "execute": "applm-sapcp:RestartCfApp:1",
+            "input": {
+              "resourceGroup": "$(.execution.input.resourceGroup)",
+              "password": "$(.execution.input.password)",
+              "resourceName": "$(.execution.input.resourceName)",
+              "region": "$(.execution.input.region)",
+              "user": "$(.execution.input.user)",
+              "rollingRestart": "false",
+              "subAccount": "$(.execution.input.subAccount)",
+              "identityProvider": "tdct3ched1-platform"
+            },
+            "alias": "restartApp",
+            "description": null,
+            "progressMessage": null,
+            "initialDelay": null,
+            "pause": null,
+            "when": {
+              "semantic": "OR",
+              "conditions": [
+                {
+                  "semantic": "OR",
+                  "cases": [
+                    {
+                      "expression": "$(.setAppResources.executed)",
+                      "operator": "EQUALS",
+                      "semantic": "OR",
+                      "values": [
+                        "true"
+                      ]
+                    }
+                  ]
+                }
+              ]
+            },
+            "validate": null,
+            "autoRetry": null,
+            "repeat": null,
+            "errorMessages": [],
+            "dryRun": null
+          }
+        ],
+        "listeners": []
+      },
+      "id": "TechEdRA-<<<TENANT_ID>>>:UpscaleAppXP267User001:1",
+      "name": "UpscaleAppXP267User001",
+      "description": "Automation for an upscaling of CAP application running on Cloud Foundry",
+      "catalog": "TechEdRA-<<<TENANT_ID>>>",
+      "version": 1,
+      "inputKeys": {
+        "resourceGroup": {
+          "type": "string",
+          "sensitive": false,
+          "required": false,
+          "minSize": null,
+          "maxSize": null,
+          "minValue": null,
+          "maxValue": null,
+          "allowedValues": null,
+          "allowedValuesFromInputKeys": null,
+          "suggestedValues": null,
+          "suggestedValuesFromInputKeys": null,
+          "defaultValue": "dev",
+          "defaultValueFromInput": null,
+          "description": "Technical name of a Cloud Foundry Space, e.g.: my-space-demo-1"
+        },
+        "password": {
+          "type": "string",
+          "sensitive": true,
+          "required": false,
+          "minSize": null,
+          "maxSize": null,
+          "minValue": null,
+          "maxValue": null,
+          "allowedValues": null,
+          "allowedValuesFromInputKeys": null,
+          "suggestedValues": null,
+          "suggestedValuesFromInputKeys": null,
+          "defaultValue": null,
+          "defaultValueFromInput": {
+            "inputReference": "techEd2025-<<<TENANT_ID>>>:btpTechUser:1",
+            "inputKey": "pass"
+          },
+          "description": "Cloud Foundry user's password"
+        },
+        "resourceName": {
+          "type": "string",
+          "sensitive": false,
+          "required": false,
+          "minSize": null,
+          "maxSize": null,
+          "minValue": null,
+          "maxValue": null,
+          "allowedValues": null,
+          "allowedValuesFromInputKeys": null,
+          "suggestedValues": null,
+          "suggestedValuesFromInputKeys": null,
+          "defaultValue": null,
+          "defaultValueFromInput": {
+            "inputReference": "techEd2025-<<<TENANT_ID>>>:appDetails:1",
+            "inputKey": "appName"
+          },
+          "description": "Technical name of a Cloud Foundry application, e.g.: my-app"
+        },
+        "region": {
+          "type": "string",
+          "sensitive": false,
+          "required": false,
+          "minSize": null,
+          "maxSize": null,
+          "minValue": null,
+          "maxValue": null,
+          "allowedValues": null,
+          "allowedValuesFromInputKeys": [
+            "metadata-sapcp:CfRegionData:1"
+          ],
+          "suggestedValues": null,
+          "suggestedValuesFromInputKeys": null,
+          "defaultValue": null,
+          "defaultValueFromInput": {
+            "inputReference": "techEd2025-<<<TENANT_ID>>>:appDetails:1",
+            "inputKey": "region"
+          },
+          "description": " Technical name of a Cloud Foundry region (as defined in CfRegionData), e.g. cf-eu10, cf-br10, etc."
+        },
+        "user": {
+          "type": "string",
+          "sensitive": false,
+          "required": false,
+          "minSize": null,
+          "maxSize": null,
+          "minValue": null,
+          "maxValue": null,
+          "allowedValues": null,
+          "allowedValuesFromInputKeys": null,
+          "suggestedValues": null,
+          "suggestedValuesFromInputKeys": null,
+          "defaultValue": null,
+          "defaultValueFromInput": {
+            "inputReference": "techEd2025-<<<TENANT_ID>>>:btpTechUser:1",
+            "inputKey": "username"
+          },
+          "description": "UserID/Email of the Cloud Foundry user which will be used for authentication"
+        },
+        "subAccount": {
+          "type": "string",
+          "sensitive": false,
+          "required": false,
+          "minSize": null,
+          "maxSize": null,
+          "minValue": null,
+          "maxValue": null,
+          "allowedValues": null,
+          "allowedValuesFromInputKeys": null,
+          "suggestedValues": null,
+          "suggestedValuesFromInputKeys": null,
+          "defaultValue": null,
+          "defaultValueFromInput": {
+            "inputReference": "techEd2025-<<<TENANT_ID>>>:appDetails:1",
+            "inputKey": "subaccount-orgName"
+          },
+          "description": "Technical name of a Cloud Foundry Organization, e.g.: my-org-name-1"
+        }
+      },
+      "outputKeys": {
+        "getAppEvents": {
+          "type": "string",
+          "sensitive": false,
+          "description": null
+        },
+        "restartAppOutput": {
+          "type": "string",
+          "sensitive": false,
+          "description": null
+        },
+        "getAppStateOutput": {
+          "type": "string",
+          "sensitive": false,
+          "description": null
+        }
+      },
+      "tags": {
+        "feature:logs": "",
+        "feature:priority": "medium"
+      },
+      "issues": []
+    }
+  ]
+}
