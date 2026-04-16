@@ -1,0 +1,1421 @@
+{
+  "id": "TechEd207-<<<TENANT_ID>>>",
+  "technicalName": "TechEd207",
+  "name": "XP267 Ex02 - Custom Metrics into Cloud ALM",
+  "description": "",
+  "owner": "<<<TENANT_ID>>>",
+  "tags": {},
+  "inputs": [
+    {
+      "id": "TechEd207-<<<TENANT_ID>>>:CloudAlmServiceKey:1",
+      "name": "CloudAlmServiceKey",
+      "description": null,
+      "catalog": "TechEd207-<<<TENANT_ID>>>",
+      "owner": null,
+      "version": 1,
+      "keys": {
+        "serviceKey": {
+          "type": "object",
+          "sensitive": true,
+          "description": "Used to authenticate and push metrics to SAP Cloud ALM API"
+        },
+        "serviceId": {
+          "type": "string",
+          "sensitive": false,
+          "description": null
+        }
+      },
+      "values": {
+        "serviceId": "c291c2d1-1d9d-4c14-bed6-df40d16fd25c",
+        "serviceKey": ""
+      },
+      "tags": {}
+    }
+  ],
+  "commands": [
+    {
+      "configuration": {
+        "values": [
+          {
+            "alias": "regionData",
+            "valueFrom": {
+              "inputReference": "metadata-sapcp:CfRegionData:1",
+              "inputKey": "$(.execution.input.region)"
+            }
+          }
+        ],
+        "output": {
+          "spaceName": "$(.getCfSpace.output.body | toObject | .name)",
+          "spaceMemoryPercentage": "$(.calculateSpaceMemoryPercentage.output.message)",
+          "spaceMemory": "$(.calculateSpaceMemory.output.spaceMemory)",
+          "totalSpaceMemory": "$(.getCfSpaceQuota.output.body | toObject | .apps.total_memory_in_mb // 0)",
+          "orgMemoryPercentage": "$(.calculateOrgMemoryPercentage.output.message)"
+        },
+        "executors": [
+          {
+            "execute": "http-sapcp:HttpRequest:1",
+            "input": {
+              "password": "$(.execution.input.password)",
+              "clientId": "cf",
+              "tokenUrl": "$(.regionData.uaaTokenUrl)?login_hint=$({ \"origin\": .execution.input.identityProvider } | toUrlEncoded)",
+              "method": "GET",
+              "user": "$(.execution.input.user)",
+              "url": "$(.regionData.cfApiUrl)/v3/spaces/$(.execution.input.spaceId)",
+              "timeout": "10"
+            },
+            "alias": "getCfSpace",
+            "description": null,
+            "progressMessage": null,
+            "initialDelay": null,
+            "pause": null,
+            "when": null,
+            "validate": null,
+            "autoRetry": null,
+            "repeat": null,
+            "errorMessages": [],
+            "dryRun": null
+          },
+          {
+            "execute": "http-sapcp:HttpRequest:1",
+            "input": {
+              "password": "$(.execution.input.password)",
+              "clientId": "cf",
+              "tokenUrl": "$(.regionData.uaaTokenUrl)?login_hint=$({ \"origin\": .execution.input.identityProvider } | toUrlEncoded)",
+              "method": "GET",
+              "user": "$(.execution.input.user)",
+              "url": "$(.regionData.cfApiUrl)/v3/organizations/$(.getCfSpace.output.body | toObject | .relationships.organization.data.guid)",
+              "timeout": "10"
+            },
+            "alias": "getCfOrg",
+            "description": null,
+            "progressMessage": null,
+            "initialDelay": null,
+            "pause": null,
+            "when": null,
+            "validate": null,
+            "autoRetry": null,
+            "repeat": null,
+            "errorMessages": [],
+            "dryRun": null
+          },
+          {
+            "execute": "http-sapcp:HttpRequest:1",
+            "input": {
+              "password": "$(.execution.input.password)",
+              "clientId": "cf",
+              "tokenUrl": "$(.regionData.uaaTokenUrl)?login_hint=$({ \"origin\": .execution.input.identityProvider } | toUrlEncoded)",
+              "method": "GET",
+              "user": "$(.execution.input.user)",
+              "url": "$(.regionData.cfApiUrl)/v3/organizations/$(.getCfSpace.output.body | toObject | .relationships.organization.data.guid)/usage_summary",
+              "timeout": "10"
+            },
+            "alias": "getCfOrgUsage",
+            "description": null,
+            "progressMessage": null,
+            "initialDelay": null,
+            "pause": null,
+            "when": null,
+            "validate": null,
+            "autoRetry": null,
+            "repeat": null,
+            "errorMessages": [],
+            "dryRun": null
+          },
+          {
+            "execute": "http-sapcp:HttpRequest:1",
+            "input": {
+              "password": "$(.execution.input.password)",
+              "clientId": "cf",
+              "tokenUrl": "$(.regionData.uaaTokenUrl)?login_hint=$({ \"origin\": .execution.input.identityProvider } | toUrlEncoded)",
+              "method": "GET",
+              "user": "$(.execution.input.user)",
+              "url": "$(.getCfOrg.output.body | toObject | .links.quota.href)",
+              "timeout": "10"
+            },
+            "alias": "getCfOrgQuota",
+            "description": null,
+            "progressMessage": null,
+            "initialDelay": null,
+            "pause": null,
+            "when": null,
+            "validate": null,
+            "autoRetry": null,
+            "repeat": null,
+            "errorMessages": [],
+            "dryRun": null
+          },
+          {
+            "execute": "http-sapcp:HttpRequest:1",
+            "input": {
+              "password": "$(.execution.input.password)",
+              "clientId": "cf",
+              "tokenUrl": "$(.regionData.uaaTokenUrl)?login_hint=$({ \"origin\": .execution.input.identityProvider } | toUrlEncoded)",
+              "method": "GET",
+              "user": "$(.execution.input.user)",
+              "url": "$(.regionData.cfApiUrl)/v3/service_instances?organization_guids=$(.getCfSpace.output.body | toObject | .relationships.organization.data.guid)",
+              "timeout": "10"
+            },
+            "alias": "getServiceInstanceByOrg",
+            "description": null,
+            "progressMessage": null,
+            "initialDelay": null,
+            "pause": null,
+            "when": null,
+            "validate": null,
+            "autoRetry": null,
+            "repeat": null,
+            "errorMessages": [],
+            "dryRun": null
+          },
+          {
+            "execute": "http-sapcp:HttpRequest:1",
+            "input": {
+              "password": "$(.execution.input.password)",
+              "clientId": "cf",
+              "tokenUrl": "$(.regionData.uaaTokenUrl)?login_hint=$({ \"origin\": .execution.input.identityProvider } | toUrlEncoded)",
+              "method": "GET",
+              "user": "$(.execution.input.user)",
+              "url": "$(.getCfSpace.output.body | toObject | .links.quota.href | if . == null then ($.getCfOrg.output.body | toObject | .links.quota.href) else . end)",
+              "timeout": "10"
+            },
+            "alias": "getCfSpaceQuota",
+            "description": null,
+            "progressMessage": null,
+            "initialDelay": null,
+            "pause": null,
+            "when": null,
+            "validate": null,
+            "autoRetry": null,
+            "repeat": null,
+            "errorMessages": [],
+            "dryRun": null
+          },
+          {
+            "execute": "http-sapcp:HttpRequest:1",
+            "input": {
+              "password": "$(.execution.input.password)",
+              "clientId": "cf",
+              "tokenUrl": "$(.regionData.uaaTokenUrl)?login_hint=$({ \"origin\": .execution.input.identityProvider } | toUrlEncoded)",
+              "method": "GET",
+              "user": "$(.execution.input.user)",
+              "url": "$(.regionData.cfApiUrl)/v3/service_instances?space_guids=$(.execution.input.spaceId)",
+              "timeout": "10"
+            },
+            "alias": "getServiceInstanceBySpace",
+            "description": null,
+            "progressMessage": null,
+            "initialDelay": null,
+            "pause": null,
+            "when": null,
+            "validate": null,
+            "autoRetry": null,
+            "repeat": null,
+            "errorMessages": [],
+            "dryRun": null
+          },
+          {
+            "execute": "applm-sapcp:ListCfApps:1",
+            "input": {
+              "resourceGroup": "$(.execution.input.spaceId)",
+              "password": "$(.execution.input.password)",
+              "pageSize": "100",
+              "region": "$(.execution.input.region)",
+              "user": "$(.execution.input.user)",
+              "subAccount": "$(.getCfOrg.output.body | toObject | .guid)",
+              "identityProvider": "$(.execution.input.identityProvider)"
+            },
+            "alias": "getCfApps",
+            "description": null,
+            "progressMessage": null,
+            "initialDelay": null,
+            "pause": null,
+            "when": null,
+            "validate": null,
+            "autoRetry": null,
+            "repeat": null,
+            "errorMessages": [],
+            "dryRun": null
+          },
+          {
+            "execute": "TechEd207-<<<TENANT_ID>>>:GetCfAppsDetailsXP267:1",
+            "input": {
+              "defaultCfCredentials": "{\"user\": \"$(.execution.input.user)\", \"password\": \"$(.execution.input.password | toEscapedJson)\", \"identityProvider\": \"$(.execution.input.identityProvider)\", \"resourceGroup\":\"$(.execution.input.spaceId)\", \"region\": \"$(.execution.input.region)\", \"subAccount\": \"$(.getCfOrg.output.body | toObject | .guid)\"}",
+              "appResources": "$(.getCfApps.output.resourceNames | map({ resourceName: . }))"
+            },
+            "alias": "calculateSpaceMemory",
+            "description": null,
+            "progressMessage": null,
+            "initialDelay": null,
+            "pause": null,
+            "when": null,
+            "validate": null,
+            "autoRetry": null,
+            "repeat": null,
+            "errorMessages": [],
+            "dryRun": null
+          },
+          {
+            "execute": "utils-sapcp:Void:1",
+            "input": {
+              "message": "$(.getCfSpaceQuota.output.body | toObject | .apps.total_memory_in_mb | if . == null then \"0\" else ((($.calculateSpaceMemory.output.spaceMemory | toNumber) / ($.getCfSpaceQuota.output.body | toObject | .apps.total_memory_in_mb | toNumber)) * 10000 | round | . / 100 | if . == null then 0 else . end) end)"
+            },
+            "alias": "calculateSpaceMemoryPercentage",
+            "description": null,
+            "progressMessage": null,
+            "initialDelay": null,
+            "pause": null,
+            "when": null,
+            "validate": null,
+            "autoRetry": null,
+            "repeat": null,
+            "errorMessages": [],
+            "dryRun": null
+          },
+          {
+            "execute": "utils-sapcp:Void:1",
+            "input": {
+              "message": "$(.getCfOrgQuota.output.body | toObject | .apps.total_memory_in_mb | if . == null or . == 0 then 0 else (($.getCfOrgUsage.output.body | toObject | .usage_summary.memory_in_mb | toNumber) / ($.getCfOrgQuota.output.body | toObject | .apps.total_memory_in_mb | toNumber) * 10000 | round | . / 100 ) end)"
+            },
+            "alias": "calculateOrgMemoryPercentage",
+            "description": null,
+            "progressMessage": null,
+            "initialDelay": null,
+            "pause": null,
+            "when": null,
+            "validate": null,
+            "autoRetry": null,
+            "repeat": null,
+            "errorMessages": [],
+            "dryRun": null
+          }
+        ],
+        "listeners": []
+      },
+      "id": "TechEd207-<<<TENANT_ID>>>:CheckResourceQuotaUtilizationXP267:1",
+      "name": "CheckResourceQuotaUtilizationXP267",
+      "description": "Calculate resource utilization of Cloud Foundry space and its parrent organization and send the insights as event towards SAP Alert Notification service",
+      "catalog": "TechEd207-<<<TENANT_ID>>>",
+      "version": 1,
+      "inputKeys": {
+        "spaceId": {
+          "type": "string",
+          "sensitive": false,
+          "required": false,
+          "minSize": null,
+          "maxSize": null,
+          "minValue": null,
+          "maxValue": null,
+          "allowedValues": null,
+          "allowedValuesFromInputKeys": null,
+          "suggestedValues": null,
+          "suggestedValuesFromInputKeys": null,
+          "defaultValue": null,
+          "defaultValueFromInput": {
+            "inputReference": "techEd2025-<<<TENANT_ID>>>:appDetails:1",
+            "inputKey": "spaceId"
+          },
+          "description": "The GUID identifier of the Cloud Foundry space"
+        },
+        "password": {
+          "type": "string",
+          "sensitive": true,
+          "required": false,
+          "minSize": null,
+          "maxSize": null,
+          "minValue": null,
+          "maxValue": null,
+          "allowedValues": null,
+          "allowedValuesFromInputKeys": null,
+          "suggestedValues": null,
+          "suggestedValuesFromInputKeys": null,
+          "defaultValue": null,
+          "defaultValueFromInput": {
+            "inputReference": "techEd2025-<<<TENANT_ID>>>:btpTechUser:1",
+            "inputKey": "pass"
+          },
+          "description": "Password for the Cloud Foundry technical user"
+        },
+        "region": {
+          "type": "string",
+          "sensitive": false,
+          "required": false,
+          "minSize": null,
+          "maxSize": null,
+          "minValue": null,
+          "maxValue": null,
+          "allowedValues": null,
+          "allowedValuesFromInputKeys": [
+            "metadata-sapcp:CfRegionData:1"
+          ],
+          "suggestedValues": null,
+          "suggestedValuesFromInputKeys": null,
+          "defaultValue": null,
+          "defaultValueFromInput": {
+            "inputReference": "techEd2025-<<<TENANT_ID>>>:appDetails:1",
+            "inputKey": "region"
+          },
+          "description": "Technical name of your SAP BTP region, e.g. cf-eu10,cf-eu20"
+        },
+        "user": {
+          "type": "string",
+          "sensitive": false,
+          "required": false,
+          "minSize": null,
+          "maxSize": null,
+          "minValue": null,
+          "maxValue": null,
+          "allowedValues": null,
+          "allowedValuesFromInputKeys": null,
+          "suggestedValues": null,
+          "suggestedValuesFromInputKeys": null,
+          "defaultValue": null,
+          "defaultValueFromInput": {
+            "inputReference": "techEd2025-<<<TENANT_ID>>>:btpTechUser:1",
+            "inputKey": "username"
+          },
+          "description": "User ID or email of a Cloud Foundry technical user"
+        },
+        "identityProvider": {
+          "type": "string",
+          "sensitive": false,
+          "required": false,
+          "minSize": null,
+          "maxSize": null,
+          "minValue": null,
+          "maxValue": null,
+          "allowedValues": null,
+          "allowedValuesFromInputKeys": null,
+          "suggestedValues": null,
+          "suggestedValuesFromInputKeys": null,
+          "defaultValue": "tdct3ched1-platform",
+          "defaultValueFromInput": null,
+          "description": "Identity provider to be used  By default it is SAP ID Service (sap.ids). To use a custom IdP, enter origin key from the CF Org/Space members section."
+        }
+      },
+      "outputKeys": {
+        "spaceName": {
+          "type": "string",
+          "sensitive": false,
+          "description": null
+        },
+        "spaceMemoryPercentage": {
+          "type": "string",
+          "sensitive": false,
+          "description": null
+        },
+        "spaceMemory": {
+          "type": "string",
+          "sensitive": false,
+          "description": null
+        },
+        "totalSpaceMemory": {
+          "type": "string",
+          "sensitive": false,
+          "description": ""
+        },
+        "orgMemoryPercentage": {
+          "type": "string",
+          "sensitive": false,
+          "description": null
+        }
+      },
+      "tags": {
+        "feature:logs": "",
+        "feature:priority": "medium"
+      },
+      "issues": []
+    },
+    {
+      "configuration": {
+        "values": [
+          {
+            "alias": "regionData",
+            "valueFrom": {
+              "inputReference": "metadata-sapcp:CfRegionData:1",
+              "inputKey": "$(.execution.input.region)"
+            }
+          }
+        ],
+        "output": {
+          "spaceName": "$(.getCfSpace.output.body | toObject | .name)",
+          "spaceMemoryPercentage": "$(.calculateSpaceMemoryPercentage.output.message)",
+          "spaceMemory": "$(.calculateSpaceMemory.output.spaceMemory)",
+          "orgMemoryPercentage": "$(.calculateOrgMemoryPercentage.output.message)"
+        },
+        "executors": [
+          {
+            "execute": "http-sapcp:HttpRequest:1",
+            "input": {
+              "password": "$(.execution.input.password)",
+              "clientId": "cf",
+              "tokenUrl": "$(.regionData.uaaTokenUrl)?login_hint=$({ \"origin\": .execution.input.identityProvider } | toUrlEncoded)",
+              "method": "GET",
+              "user": "$(.execution.input.user)",
+              "url": "$(.regionData.cfApiUrl)/v3/spaces/$(.execution.input.spaceId)",
+              "timeout": "10"
+            },
+            "alias": "getCfSpace",
+            "description": null,
+            "progressMessage": null,
+            "initialDelay": null,
+            "pause": null,
+            "when": null,
+            "validate": null,
+            "autoRetry": null,
+            "repeat": null,
+            "errorMessages": [],
+            "dryRun": null
+          },
+          {
+            "execute": "http-sapcp:HttpRequest:1",
+            "input": {
+              "password": "$(.execution.input.password)",
+              "clientId": "cf",
+              "tokenUrl": "$(.regionData.uaaTokenUrl)?login_hint=$({ \"origin\": .execution.input.identityProvider } | toUrlEncoded)",
+              "method": "GET",
+              "user": "$(.execution.input.user)",
+              "url": "$(.regionData.cfApiUrl)/v3/organizations/$(.getCfSpace.output.body | toObject | .relationships.organization.data.guid)",
+              "timeout": "10"
+            },
+            "alias": "getCfOrg",
+            "description": null,
+            "progressMessage": null,
+            "initialDelay": null,
+            "pause": null,
+            "when": null,
+            "validate": null,
+            "autoRetry": null,
+            "repeat": null,
+            "errorMessages": [],
+            "dryRun": null
+          },
+          {
+            "execute": "http-sapcp:HttpRequest:1",
+            "input": {
+              "password": "$(.execution.input.password)",
+              "clientId": "cf",
+              "tokenUrl": "$(.regionData.uaaTokenUrl)?login_hint=$({ \"origin\": .execution.input.identityProvider } | toUrlEncoded)",
+              "method": "GET",
+              "user": "$(.execution.input.user)",
+              "url": "$(.regionData.cfApiUrl)/v3/organizations/$(.getCfSpace.output.body | toObject | .relationships.organization.data.guid)/usage_summary",
+              "timeout": "10"
+            },
+            "alias": "getCfOrgUsage",
+            "description": null,
+            "progressMessage": null,
+            "initialDelay": null,
+            "pause": null,
+            "when": null,
+            "validate": null,
+            "autoRetry": null,
+            "repeat": null,
+            "errorMessages": [],
+            "dryRun": null
+          },
+          {
+            "execute": "http-sapcp:HttpRequest:1",
+            "input": {
+              "password": "$(.execution.input.password)",
+              "clientId": "cf",
+              "tokenUrl": "$(.regionData.uaaTokenUrl)?login_hint=$({ \"origin\": .execution.input.identityProvider } | toUrlEncoded)",
+              "method": "GET",
+              "user": "$(.execution.input.user)",
+              "url": "$(.getCfOrg.output.body | toObject | .links.quota.href)",
+              "timeout": "10"
+            },
+            "alias": "getCfOrgQuota",
+            "description": null,
+            "progressMessage": null,
+            "initialDelay": null,
+            "pause": null,
+            "when": null,
+            "validate": null,
+            "autoRetry": null,
+            "repeat": null,
+            "errorMessages": [],
+            "dryRun": null
+          },
+          {
+            "execute": "http-sapcp:HttpRequest:1",
+            "input": {
+              "password": "$(.execution.input.password)",
+              "clientId": "cf",
+              "tokenUrl": "$(.regionData.uaaTokenUrl)?login_hint=$({ \"origin\": .execution.input.identityProvider } | toUrlEncoded)",
+              "method": "GET",
+              "user": "$(.execution.input.user)",
+              "url": "$(.regionData.cfApiUrl)/v3/service_instances?organization_guids=$(.getCfSpace.output.body | toObject | .relationships.organization.data.guid)",
+              "timeout": "10"
+            },
+            "alias": "getServiceInstanceByOrg",
+            "description": null,
+            "progressMessage": null,
+            "initialDelay": null,
+            "pause": null,
+            "when": null,
+            "validate": null,
+            "autoRetry": null,
+            "repeat": null,
+            "errorMessages": [],
+            "dryRun": null
+          },
+          {
+            "execute": "http-sapcp:HttpRequest:1",
+            "input": {
+              "password": "$(.execution.input.password)",
+              "clientId": "cf",
+              "tokenUrl": "$(.regionData.uaaTokenUrl)?login_hint=$({ \"origin\": .execution.input.identityProvider } | toUrlEncoded)",
+              "method": "GET",
+              "user": "$(.execution.input.user)",
+              "url": "$(.getCfSpace.output.body | toObject | .links.quota.href | if . == null then ($.getCfOrg.output.body | toObject | .links.quota.href) else . end)",
+              "timeout": "10"
+            },
+            "alias": "getCfSpaceQuota",
+            "description": null,
+            "progressMessage": null,
+            "initialDelay": null,
+            "pause": null,
+            "when": null,
+            "validate": null,
+            "autoRetry": null,
+            "repeat": null,
+            "errorMessages": [],
+            "dryRun": null
+          },
+          {
+            "execute": "http-sapcp:HttpRequest:1",
+            "input": {
+              "password": "$(.execution.input.password)",
+              "clientId": "cf",
+              "tokenUrl": "$(.regionData.uaaTokenUrl)?login_hint=$({ \"origin\": .execution.input.identityProvider } | toUrlEncoded)",
+              "method": "GET",
+              "user": "$(.execution.input.user)",
+              "url": "$(.regionData.cfApiUrl)/v3/service_instances?space_guids=$(.execution.input.spaceId)",
+              "timeout": "10"
+            },
+            "alias": "getServiceInstanceBySpace",
+            "description": null,
+            "progressMessage": null,
+            "initialDelay": null,
+            "pause": null,
+            "when": null,
+            "validate": null,
+            "autoRetry": null,
+            "repeat": null,
+            "errorMessages": [],
+            "dryRun": null
+          },
+          {
+            "execute": "applm-sapcp:ListCfApps:1",
+            "input": {
+              "resourceGroup": "$(.execution.input.spaceId)",
+              "password": "$(.execution.input.password)",
+              "pageSize": "100",
+              "region": "$(.execution.input.region)",
+              "user": "$(.execution.input.user)",
+              "subAccount": "$(.getCfOrg.output.body | toObject | .guid)",
+              "identityProvider": "$(.execution.input.identityProvider)"
+            },
+            "alias": "getCfApps",
+            "description": null,
+            "progressMessage": null,
+            "initialDelay": null,
+            "pause": null,
+            "when": null,
+            "validate": null,
+            "autoRetry": null,
+            "repeat": null,
+            "errorMessages": [],
+            "dryRun": null
+          },
+          {
+            "execute": "TechEd207-<<<TENANT_ID>>>:GetCfAppsDetailsXP267:1",
+            "input": {
+              "defaultCfCredentials": "{\"user\": \"$(.execution.input.user)\", \"password\": \"$(.execution.input.password | toEscapedJson)\", \"identityProvider\": \"$(.execution.input.identityProvider)\", \"resourceGroup\":\"$(.execution.input.spaceId)\", \"region\": \"$(.execution.input.region)\", \"subAccount\": \"$(.getCfOrg.output.body | toObject | .guid)\"}",
+              "appResources": "$(.getCfApps.output.resourceNames | map({ resourceName: . }))"
+            },
+            "alias": "calculateSpaceMemory",
+            "description": null,
+            "progressMessage": null,
+            "initialDelay": null,
+            "pause": null,
+            "when": null,
+            "validate": null,
+            "autoRetry": null,
+            "repeat": null,
+            "errorMessages": [],
+            "dryRun": null
+          },
+          {
+            "execute": "utils-sapcp:Void:1",
+            "input": {
+              "message": "$(.getCfSpaceQuota.output.body | toObject | .apps.total_memory_in_mb | if . == null then \"0\" else ((($.calculateSpaceMemory.output.spaceMemory | toNumber) / ($.getCfSpaceQuota.output.body | toObject | .apps.total_memory_in_mb | toNumber)) * 10000 | round | . / 100 | if . == null then 0 else . end) end)"
+            },
+            "alias": "calculateSpaceMemoryPercentage",
+            "description": null,
+            "progressMessage": null,
+            "initialDelay": null,
+            "pause": null,
+            "when": null,
+            "validate": null,
+            "autoRetry": null,
+            "repeat": null,
+            "errorMessages": [],
+            "dryRun": null
+          },
+          {
+            "execute": "utils-sapcp:Void:1",
+            "input": {
+              "message": "$(.getCfOrgQuota.output.body | toObject | .apps.total_memory_in_mb | if . == null or . == 0 then 0 else (($.getCfOrgUsage.output.body | toObject | .usage_summary.memory_in_mb | toNumber) / ($.getCfOrgQuota.output.body | toObject | .apps.total_memory_in_mb | toNumber) * 10000 | round | . / 100 ) end)"
+            },
+            "alias": "calculateOrgMemoryPercentage",
+            "description": null,
+            "progressMessage": null,
+            "initialDelay": null,
+            "pause": null,
+            "when": null,
+            "validate": null,
+            "autoRetry": null,
+            "repeat": null,
+            "errorMessages": [],
+            "dryRun": null
+          }
+        ],
+        "listeners": []
+      },
+      "id": "TechEd207-<<<TENANT_ID>>>:CheckResourceQuotaUtilizationXP267Extended:1",
+      "name": "CheckResourceQuotaUtilizationXP267Extended",
+      "description": "Calculate resource utilization of Cloud Foundry space and its parrent organization and send the insights as event towards SAP Alert Notification service",
+      "catalog": "TechEd207-<<<TENANT_ID>>>",
+      "version": 1,
+      "inputKeys": {
+        "spaceId": {
+          "type": "string",
+          "sensitive": false,
+          "required": false,
+          "minSize": null,
+          "maxSize": null,
+          "minValue": null,
+          "maxValue": null,
+          "allowedValues": null,
+          "allowedValuesFromInputKeys": null,
+          "suggestedValues": null,
+          "suggestedValuesFromInputKeys": null,
+          "defaultValue": null,
+          "defaultValueFromInput": {
+            "inputReference": "techEd2025-<<<TENANT_ID>>>:appDetails:1",
+            "inputKey": "spaceId"
+          },
+          "description": "The GUID identifier of the Cloud Foundry space"
+        },
+        "password": {
+          "type": "string",
+          "sensitive": true,
+          "required": false,
+          "minSize": null,
+          "maxSize": null,
+          "minValue": null,
+          "maxValue": null,
+          "allowedValues": null,
+          "allowedValuesFromInputKeys": null,
+          "suggestedValues": null,
+          "suggestedValuesFromInputKeys": null,
+          "defaultValue": null,
+          "defaultValueFromInput": {
+            "inputReference": "techEd2025-<<<TENANT_ID>>>:btpTechUser:1",
+            "inputKey": "pass"
+          },
+          "description": "Password for the Cloud Foundry technical user"
+        },
+        "calmServiceId": {
+          "type": "string",
+          "sensitive": false,
+          "required": false,
+          "minSize": null,
+          "maxSize": null,
+          "minValue": null,
+          "maxValue": null,
+          "allowedValues": null,
+          "allowedValuesFromInputKeys": null,
+          "suggestedValues": null,
+          "suggestedValuesFromInputKeys": null,
+          "defaultValue": null,
+          "defaultValueFromInput": {
+            "inputReference": "TechEd207-<<<TENANT_ID>>>:CloudAlmServiceKey:1",
+            "inputKey": "serviceId"
+          },
+          "description": null
+        },
+        "serviceKey": {
+          "type": "object",
+          "sensitive": true,
+          "required": false,
+          "minSize": null,
+          "maxSize": null,
+          "minValue": null,
+          "maxValue": null,
+          "allowedValues": null,
+          "allowedValuesFromInputKeys": null,
+          "suggestedValues": null,
+          "suggestedValuesFromInputKeys": null,
+          "defaultValue": null,
+          "defaultValueFromInput": {
+            "inputReference": "TechEd207-<<<TENANT_ID>>>:CloudAlmServiceKey:1",
+            "inputKey": "serviceKey"
+          },
+          "description": null
+        },
+        "region": {
+          "type": "string",
+          "sensitive": false,
+          "required": false,
+          "minSize": null,
+          "maxSize": null,
+          "minValue": null,
+          "maxValue": null,
+          "allowedValues": null,
+          "allowedValuesFromInputKeys": [
+            "metadata-sapcp:CfRegionData:1"
+          ],
+          "suggestedValues": null,
+          "suggestedValuesFromInputKeys": null,
+          "defaultValue": null,
+          "defaultValueFromInput": {
+            "inputReference": "techEd2025-<<<TENANT_ID>>>:appDetails:1",
+            "inputKey": "region"
+          },
+          "description": "Technical name of your SAP BTP region, e.g. cf-eu10,cf-eu20"
+        },
+        "user": {
+          "type": "string",
+          "sensitive": false,
+          "required": false,
+          "minSize": null,
+          "maxSize": null,
+          "minValue": null,
+          "maxValue": null,
+          "allowedValues": null,
+          "allowedValuesFromInputKeys": null,
+          "suggestedValues": null,
+          "suggestedValuesFromInputKeys": null,
+          "defaultValue": null,
+          "defaultValueFromInput": {
+            "inputReference": "techEd2025-<<<TENANT_ID>>>:btpTechUser:1",
+            "inputKey": "username"
+          },
+          "description": "User ID or email of a Cloud Foundry technical user"
+        },
+        "identityProvider": {
+          "type": "string",
+          "sensitive": false,
+          "required": false,
+          "minSize": null,
+          "maxSize": null,
+          "minValue": null,
+          "maxValue": null,
+          "allowedValues": null,
+          "allowedValuesFromInputKeys": null,
+          "suggestedValues": null,
+          "suggestedValuesFromInputKeys": null,
+          "defaultValue": "tdct3ched1-platform",
+          "defaultValueFromInput": null,
+          "description": "Identity provider to be used  By default it is SAP ID Service (sap.ids). To use a custom IdP, enter origin key from the CF Org/Space members section."
+        }
+      },
+      "outputKeys": {
+        "spaceName": {
+          "type": "string",
+          "sensitive": false,
+          "description": null
+        },
+        "spaceMemoryPercentage": {
+          "type": "string",
+          "sensitive": false,
+          "description": null
+        },
+        "spaceMemory": {
+          "type": "string",
+          "sensitive": false,
+          "description": null
+        },
+        "orgMemoryPercentage": {
+          "type": "string",
+          "sensitive": false,
+          "description": null
+        }
+      },
+      "tags": {
+        "feature:logs": "",
+        "feature:priority": "medium"
+      },
+      "issues": []
+    },
+    {
+      "configuration": {
+        "values": [],
+        "output": {
+          "spaceMemory": "$(.extractSpaceMemory.output.message)"
+        },
+        "executors": [
+          {
+            "execute": "utils-sapcp:ForEach:2",
+            "input": {
+              "inputMapping": "{\"resourceGroup\":\"$(.execution.input.defaultCfCredentials.resourceGroup)\",\"password\":\"$(.execution.input.defaultCfCredentials.password)\",\"resourceName\":\"$(.calculateAppMemory.current.item.resourceName)\",\"region\":\"$(.execution.input.defaultCfCredentials.region)\",\"user\":\"$(.execution.input.defaultCfCredentials.user)\",\"subAccount\":\"$(.execution.input.defaultCfCredentials.subAccount)\",\"identityProvider\":\"$(.execution.input.defaultCfCredentials.identityProvider)\"}",
+              "inputs": "$(.execution.input.appResources)",
+              "command": "applm-sapcp:GetCfAppState:2"
+            },
+            "alias": "calculateAppMemory",
+            "description": null,
+            "progressMessage": null,
+            "initialDelay": null,
+            "pause": null,
+            "when": null,
+            "validate": null,
+            "autoRetry": null,
+            "repeat": null,
+            "errorMessages": [],
+            "dryRun": null
+          },
+          {
+            "execute": "utils-sapcp:Void:1",
+            "input": {
+              "message": "$(.calculateAppMemory.output.outputs | filter(.desiredState != \"STOPPED\") | map(.memory * (.resourceInstances | length)) | add)"
+            },
+            "alias": "extractSpaceMemory",
+            "description": null,
+            "progressMessage": null,
+            "initialDelay": null,
+            "pause": null,
+            "when": null,
+            "validate": null,
+            "autoRetry": null,
+            "repeat": null,
+            "errorMessages": [],
+            "dryRun": null
+          }
+        ],
+        "listeners": []
+      },
+      "id": "TechEd207-<<<TENANT_ID>>>:GetCfAppsDetailsXP267:1",
+      "name": "GetCfAppsDetailsXP267",
+      "description": null,
+      "catalog": "TechEd207-<<<TENANT_ID>>>",
+      "version": 1,
+      "inputKeys": {
+        "defaultCfCredentials": {
+          "type": "object",
+          "sensitive": false,
+          "required": true,
+          "minSize": null,
+          "maxSize": null,
+          "minValue": null,
+          "maxValue": null,
+          "allowedValues": null,
+          "allowedValuesFromInputKeys": null,
+          "suggestedValues": null,
+          "suggestedValuesFromInputKeys": null,
+          "defaultValue": null,
+          "defaultValueFromInput": null,
+          "description": "Credentials need to authenticate against Cloud Foundry"
+        },
+        "appResources": {
+          "type": "array",
+          "sensitive": false,
+          "required": true,
+          "minSize": null,
+          "maxSize": null,
+          "minValue": null,
+          "maxValue": null,
+          "allowedValues": null,
+          "allowedValuesFromInputKeys": null,
+          "suggestedValues": null,
+          "suggestedValuesFromInputKeys": null,
+          "defaultValue": null,
+          "defaultValueFromInput": null,
+          "description": "Aplications data in the Cloud Foundry space"
+        }
+      },
+      "outputKeys": {
+        "spaceMemory": {
+          "type": "string",
+          "sensitive": false,
+          "description": "Total memory used by all started applications in the Cloud Foundry space"
+        }
+      },
+      "tags": {
+        "feature:logs": "",
+        "feature:priority": "medium"
+      },
+      "issues": []
+    },
+    {
+      "configuration": {
+        "values": [
+          {
+            "alias": "regionData",
+            "valueFrom": {
+              "inputReference": "metadata-sapcp:CfRegionData:1",
+              "inputKey": "$(.execution.input.region)"
+            }
+          }
+        ],
+        "output": {
+          "spaceName": "$(.getCfSpace.output.body | toObject | .name)",
+          "spaceMemoryPercentage": "$(.calculateSpaceMemoryPercentage.output.message)",
+          "spaceMemory": "$(.calculateSpaceMemory.output.spaceMemory)",
+          "orgMemoryPercentage": "$(.calculateOrgMemoryPercentage.output.message)"
+        },
+        "executors": [
+          {
+            "execute": "http-sapcp:HttpRequest:1",
+            "input": {
+              "password": "$(.execution.input.password)",
+              "clientId": "cf",
+              "tokenUrl": "$(.regionData.uaaTokenUrl)?login_hint=$({ \"origin\": .execution.input.identityProvider } | toUrlEncoded)",
+              "method": "GET",
+              "user": "$(.execution.input.user)",
+              "url": "$(.regionData.cfApiUrl)/v3/spaces/$(.execution.input.spaceId)",
+              "timeout": "10"
+            },
+            "alias": "getCfSpace",
+            "description": null,
+            "progressMessage": null,
+            "initialDelay": null,
+            "pause": null,
+            "when": null,
+            "validate": null,
+            "autoRetry": null,
+            "repeat": null,
+            "errorMessages": [],
+            "dryRun": null
+          },
+          {
+            "execute": "http-sapcp:HttpRequest:1",
+            "input": {
+              "password": "$(.execution.input.password)",
+              "clientId": "cf",
+              "tokenUrl": "$(.regionData.uaaTokenUrl)?login_hint=$({ \"origin\": .execution.input.identityProvider } | toUrlEncoded)",
+              "method": "GET",
+              "user": "$(.execution.input.user)",
+              "url": "$(.regionData.cfApiUrl)/v3/organizations/$(.getCfSpace.output.body | toObject | .relationships.organization.data.guid)",
+              "timeout": "10"
+            },
+            "alias": "getCfOrg",
+            "description": null,
+            "progressMessage": null,
+            "initialDelay": null,
+            "pause": null,
+            "when": null,
+            "validate": null,
+            "autoRetry": null,
+            "repeat": null,
+            "errorMessages": [],
+            "dryRun": null
+          },
+          {
+            "execute": "http-sapcp:HttpRequest:1",
+            "input": {
+              "password": "$(.execution.input.password)",
+              "clientId": "cf",
+              "tokenUrl": "$(.regionData.uaaTokenUrl)?login_hint=$({ \"origin\": .execution.input.identityProvider } | toUrlEncoded)",
+              "method": "GET",
+              "user": "$(.execution.input.user)",
+              "url": "$(.regionData.cfApiUrl)/v3/organizations/$(.getCfSpace.output.body | toObject | .relationships.organization.data.guid)/usage_summary",
+              "timeout": "10"
+            },
+            "alias": "getCfOrgUsage",
+            "description": null,
+            "progressMessage": null,
+            "initialDelay": null,
+            "pause": null,
+            "when": null,
+            "validate": null,
+            "autoRetry": null,
+            "repeat": null,
+            "errorMessages": [],
+            "dryRun": null
+          },
+          {
+            "execute": "http-sapcp:HttpRequest:1",
+            "input": {
+              "password": "$(.execution.input.password)",
+              "clientId": "cf",
+              "tokenUrl": "$(.regionData.uaaTokenUrl)?login_hint=$({ \"origin\": .execution.input.identityProvider } | toUrlEncoded)",
+              "method": "GET",
+              "user": "$(.execution.input.user)",
+              "url": "$(.getCfOrg.output.body | toObject | .links.quota.href)",
+              "timeout": "10"
+            },
+            "alias": "getCfOrgQuota",
+            "description": null,
+            "progressMessage": null,
+            "initialDelay": null,
+            "pause": null,
+            "when": null,
+            "validate": null,
+            "autoRetry": null,
+            "repeat": null,
+            "errorMessages": [],
+            "dryRun": null
+          },
+          {
+            "execute": "http-sapcp:HttpRequest:1",
+            "input": {
+              "password": "$(.execution.input.password)",
+              "clientId": "cf",
+              "tokenUrl": "$(.regionData.uaaTokenUrl)?login_hint=$({ \"origin\": .execution.input.identityProvider } | toUrlEncoded)",
+              "method": "GET",
+              "user": "$(.execution.input.user)",
+              "url": "$(.regionData.cfApiUrl)/v3/service_instances?organization_guids=$(.getCfSpace.output.body | toObject | .relationships.organization.data.guid)",
+              "timeout": "10"
+            },
+            "alias": "getServiceInstanceByOrg",
+            "description": null,
+            "progressMessage": null,
+            "initialDelay": null,
+            "pause": null,
+            "when": null,
+            "validate": null,
+            "autoRetry": null,
+            "repeat": null,
+            "errorMessages": [],
+            "dryRun": null
+          },
+          {
+            "execute": "http-sapcp:HttpRequest:1",
+            "input": {
+              "password": "$(.execution.input.password)",
+              "clientId": "cf",
+              "tokenUrl": "$(.regionData.uaaTokenUrl)?login_hint=$({ \"origin\": .execution.input.identityProvider } | toUrlEncoded)",
+              "method": "GET",
+              "user": "$(.execution.input.user)",
+              "url": "$(.getCfSpace.output.body | toObject | .links.quota.href | if . == null then ($.getCfOrg.output.body | toObject | .links.quota.href) else . end)",
+              "timeout": "10"
+            },
+            "alias": "getCfSpaceQuota",
+            "description": null,
+            "progressMessage": null,
+            "initialDelay": null,
+            "pause": null,
+            "when": null,
+            "validate": null,
+            "autoRetry": null,
+            "repeat": null,
+            "errorMessages": [],
+            "dryRun": null
+          },
+          {
+            "execute": "http-sapcp:HttpRequest:1",
+            "input": {
+              "password": "$(.execution.input.password)",
+              "clientId": "cf",
+              "tokenUrl": "$(.regionData.uaaTokenUrl)?login_hint=$({ \"origin\": .execution.input.identityProvider } | toUrlEncoded)",
+              "method": "GET",
+              "user": "$(.execution.input.user)",
+              "url": "$(.regionData.cfApiUrl)/v3/service_instances?space_guids=$(.execution.input.spaceId)",
+              "timeout": "10"
+            },
+            "alias": "getServiceInstanceBySpace",
+            "description": null,
+            "progressMessage": null,
+            "initialDelay": null,
+            "pause": null,
+            "when": null,
+            "validate": null,
+            "autoRetry": null,
+            "repeat": null,
+            "errorMessages": [],
+            "dryRun": null
+          },
+          {
+            "execute": "applm-sapcp:ListCfApps:1",
+            "input": {
+              "resourceGroup": "$(.execution.input.spaceId)",
+              "password": "$(.execution.input.password)",
+              "pageSize": "100",
+              "region": "$(.execution.input.region)",
+              "user": "$(.execution.input.user)",
+              "subAccount": "$(.getCfOrg.output.body | toObject | .guid)",
+              "identityProvider": "$(.execution.input.identityProvider)"
+            },
+            "alias": "getCfApps",
+            "description": null,
+            "progressMessage": null,
+            "initialDelay": null,
+            "pause": null,
+            "when": null,
+            "validate": null,
+            "autoRetry": null,
+            "repeat": null,
+            "errorMessages": [],
+            "dryRun": null
+          },
+          {
+            "execute": "TechEd207-<<<TENANT_ID>>>:GetCfAppsDetailsXP267:1",
+            "input": {
+              "defaultCfCredentials": "{\"user\": \"$(.execution.input.user)\", \"password\": \"$(.execution.input.password | toEscapedJson)\", \"identityProvider\": \"$(.execution.input.identityProvider)\", \"resourceGroup\":\"$(.execution.input.spaceId)\", \"region\": \"$(.execution.input.region)\", \"subAccount\": \"$(.getCfOrg.output.body | toObject | .guid)\"}",
+              "appResources": "$(.getCfApps.output.resourceNames | map({ resourceName: . }))"
+            },
+            "alias": "calculateSpaceMemory",
+            "description": null,
+            "progressMessage": null,
+            "initialDelay": null,
+            "pause": null,
+            "when": null,
+            "validate": null,
+            "autoRetry": null,
+            "repeat": null,
+            "errorMessages": [],
+            "dryRun": null
+          },
+          {
+            "execute": "utils-sapcp:Void:1",
+            "input": {
+              "message": "$(.getCfSpaceQuota.output.body | toObject | .apps.total_memory_in_mb | if . == null then \"0\" else ((($.calculateSpaceMemory.output.spaceMemory | toNumber) / ($.getCfSpaceQuota.output.body | toObject | .apps.total_memory_in_mb | toNumber)) * 10000 | round | . / 100 | if . == null then 0 else . end) end)"
+            },
+            "alias": "calculateSpaceMemoryPercentage",
+            "description": null,
+            "progressMessage": null,
+            "initialDelay": null,
+            "pause": null,
+            "when": null,
+            "validate": null,
+            "autoRetry": null,
+            "repeat": null,
+            "errorMessages": [],
+            "dryRun": null
+          },
+          {
+            "execute": "utils-sapcp:Void:1",
+            "input": {
+              "message": "$(.getCfOrgQuota.output.body | toObject | .apps.total_memory_in_mb | if . == null or . == 0 then 0 else (($.getCfOrgUsage.output.body | toObject | .usage_summary.memory_in_mb | toNumber) / ($.getCfOrgQuota.output.body | toObject | .apps.total_memory_in_mb | toNumber) * 10000 | round | . / 100 ) end)"
+            },
+            "alias": "calculateOrgMemoryPercentage",
+            "description": null,
+            "progressMessage": null,
+            "initialDelay": null,
+            "pause": null,
+            "when": null,
+            "validate": null,
+            "autoRetry": null,
+            "repeat": null,
+            "errorMessages": [],
+            "dryRun": null
+          },
+          {
+            "execute": "calmhm-sapcp:PushCloudAlmQuotaMetric:1",
+            "input": {
+              "severity": "$(.calculateSpaceMemoryPercentage.output.message | toNumber | if . > 95 then \"fatal\" elif . > 85 then \"critical\" elif . > 70 then \"warning\" elif . > 0 then \"ok\" else \"error\" end)",
+              "unit": "mb",
+              "metricName": "space.memory.utilization",
+              "usage": "$(.calculateSpaceMemory.output.spaceMemory // 0)",
+              "limit": "$(.getCfSpaceQuota.output.body | toObject | .apps.total_memory_in_mb // 0)",
+              "serviceKey": "$(.execution.input.serviceKey)",
+              "serviceId": "$(.execution.input.calmServiceId)"
+            },
+            "alias": "pushSpaceMemoryUtilization",
+            "description": null,
+            "progressMessage": null,
+            "initialDelay": null,
+            "pause": null,
+            "when": null,
+            "validate": null,
+            "autoRetry": null,
+            "repeat": null,
+            "errorMessages": [],
+            "dryRun": null
+          },
+          {
+            "execute": "calmhm-sapcp:PushCloudAlmQuotaMetric:1",
+            "input": {
+              "severity": "$(.calculateOrgMemoryPercentage.output.message | toNumber | if . > 95 then \"fatal\" elif . > 85 then \"critical\" elif . > 70 then \"warning\" elif . > 0 then \"ok\" else \"error\" end)",
+              "unit": "mb",
+              "metricName": "org.memory.utilization",
+              "usage": "$(.getCfOrgUsage.output.body | toObject | .usage_summary.memory_in_mb // 0)",
+              "limit": "$(.getCfOrgQuota.output.body | toObject | .apps.total_memory_in_mb // 0)",
+              "serviceKey": "$(.execution.input.serviceKey)",
+              "serviceId": "$(.execution.input.calmServiceId)"
+            },
+            "alias": "pushOrgMemoryUtilization",
+            "description": null,
+            "progressMessage": null,
+            "initialDelay": null,
+            "pause": null,
+            "when": null,
+            "validate": null,
+            "autoRetry": null,
+            "repeat": null,
+            "errorMessages": [],
+            "dryRun": null
+          }
+        ],
+        "listeners": []
+      },
+      "id": "TechEd207-<<<TENANT_ID>>>:PushToCalmXP267:1",
+      "name": "PushToCalmXP267",
+      "description": "Calculate resource utilization of Cloud Foundry space and its parrent organization and send the insights as event towards SAP Alert Notification service",
+      "catalog": "TechEd207-<<<TENANT_ID>>>",
+      "version": 1,
+      "inputKeys": {
+        "spaceId": {
+          "type": "string",
+          "sensitive": false,
+          "required": false,
+          "minSize": null,
+          "maxSize": null,
+          "minValue": null,
+          "maxValue": null,
+          "allowedValues": null,
+          "allowedValuesFromInputKeys": null,
+          "suggestedValues": null,
+          "suggestedValuesFromInputKeys": null,
+          "defaultValue": null,
+          "defaultValueFromInput": {
+            "inputReference": "techEd2025-<<<TENANT_ID>>>:appDetails:1",
+            "inputKey": "spaceId"
+          },
+          "description": "The GUID identifier of the Cloud Foundry space"
+        },
+        "password": {
+          "type": "string",
+          "sensitive": true,
+          "required": false,
+          "minSize": null,
+          "maxSize": null,
+          "minValue": null,
+          "maxValue": null,
+          "allowedValues": null,
+          "allowedValuesFromInputKeys": null,
+          "suggestedValues": null,
+          "suggestedValuesFromInputKeys": null,
+          "defaultValue": null,
+          "defaultValueFromInput": {
+            "inputReference": "techEd2025-<<<TENANT_ID>>>:btpTechUser:1",
+            "inputKey": "pass"
+          },
+          "description": "Password for the Cloud Foundry technical user"
+        },
+        "calmServiceId": {
+          "type": "string",
+          "sensitive": false,
+          "required": false,
+          "minSize": null,
+          "maxSize": null,
+          "minValue": null,
+          "maxValue": null,
+          "allowedValues": null,
+          "allowedValuesFromInputKeys": null,
+          "suggestedValues": null,
+          "suggestedValuesFromInputKeys": null,
+          "defaultValue": null,
+          "defaultValueFromInput": {
+            "inputReference": "TechEd207-<<<TENANT_ID>>>:CloudAlmServiceKey:1",
+            "inputKey": "serviceId"
+          },
+          "description": null
+        },
+        "serviceKey": {
+          "type": "object",
+          "sensitive": true,
+          "required": false,
+          "minSize": null,
+          "maxSize": null,
+          "minValue": null,
+          "maxValue": null,
+          "allowedValues": null,
+          "allowedValuesFromInputKeys": null,
+          "suggestedValues": null,
+          "suggestedValuesFromInputKeys": null,
+          "defaultValue": null,
+          "defaultValueFromInput": {
+            "inputReference": "TechEd207-<<<TENANT_ID>>>:CloudAlmServiceKey:1",
+            "inputKey": "serviceKey"
+          },
+          "description": null
+        },
+        "region": {
+          "type": "string",
+          "sensitive": false,
+          "required": false,
+          "minSize": null,
+          "maxSize": null,
+          "minValue": null,
+          "maxValue": null,
+          "allowedValues": null,
+          "allowedValuesFromInputKeys": [
+            "metadata-sapcp:CfRegionData:1"
+          ],
+          "suggestedValues": null,
+          "suggestedValuesFromInputKeys": null,
+          "defaultValue": null,
+          "defaultValueFromInput": {
+            "inputReference": "techEd2025-<<<TENANT_ID>>>:appDetails:1",
+            "inputKey": "region"
+          },
+          "description": "Technical name of your SAP BTP region, e.g. cf-eu10,cf-eu20"
+        },
+        "user": {
+          "type": "string",
+          "sensitive": false,
+          "required": false,
+          "minSize": null,
+          "maxSize": null,
+          "minValue": null,
+          "maxValue": null,
+          "allowedValues": null,
+          "allowedValuesFromInputKeys": null,
+          "suggestedValues": null,
+          "suggestedValuesFromInputKeys": null,
+          "defaultValue": null,
+          "defaultValueFromInput": {
+            "inputReference": "techEd2025-<<<TENANT_ID>>>:btpTechUser:1",
+            "inputKey": "username"
+          },
+          "description": "User ID or email of a Cloud Foundry technical user"
+        },
+        "identityProvider": {
+          "type": "string",
+          "sensitive": false,
+          "required": false,
+          "minSize": null,
+          "maxSize": null,
+          "minValue": null,
+          "maxValue": null,
+          "allowedValues": null,
+          "allowedValuesFromInputKeys": null,
+          "suggestedValues": null,
+          "suggestedValuesFromInputKeys": null,
+          "defaultValue": "tdct3ched1-platform",
+          "defaultValueFromInput": null,
+          "description": "Identity provider to be used  By default it is SAP ID Service (sap.ids). To use a custom IdP, enter origin key from the CF Org/Space members section."
+        }
+      },
+      "outputKeys": {
+        "spaceName": {
+          "type": "string",
+          "sensitive": false,
+          "description": null
+        },
+        "spaceMemoryPercentage": {
+          "type": "string",
+          "sensitive": false,
+          "description": null
+        },
+        "spaceMemory": {
+          "type": "string",
+          "sensitive": false,
+          "description": null
+        },
+        "orgMemoryPercentage": {
+          "type": "string",
+          "sensitive": false,
+          "description": null
+        }
+      },
+      "tags": {
+        "feature:logs": "",
+        "feature:priority": "medium"
+      },
+      "issues": []
+    }
+  ]
+}
