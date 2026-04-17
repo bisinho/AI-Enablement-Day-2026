@@ -1,4 +1,4 @@
-# 🧪 Topic #2: AI Agents and 
+# 🧪 Topic #2: Extend Apps with AI Agents 
 
 ## 🎯 Objective
 - Introduction to **AI extensibility patterns** on SAP BTP
