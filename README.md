@@ -36,12 +36,12 @@ The focus of the day is simple:
 - Overview of **Joule** and **Joule Studio** capabilities
 - Building **AI agents / skills** for business scenarios
 
-**Hands-on:**
+**Demos:**
 - Creating AI-powered extensions using **SAP Build Process Automation (SBPA)**
 - Designing and testing **AI agents with Joule**
 - Exploring real-life **AI-assisted automation use cases**
 
-**Main services used:**
+**Main services considered:**
 - SAP Build Process Automation  
 - Joule  
 - Joule Studio  
